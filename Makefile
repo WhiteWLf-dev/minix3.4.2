@@ -7,8 +7,8 @@
 ## via Makefile.in
 
 PLATFORM=darwin-i386
-OPTIONS= no-acvp-tests no-afalgeng no-apps no-argon2 no-aria no-asan no-asm no-async no-atexit no-autoalginit no-autoerrinit no-autoload-config no-bf no-blake2 no-brotli no-brotli-dynamic no-buildtest-c++ no-bulk no-cached-fetch no-camellia no-capieng no-cast no-chacha no-cmac no-cmp no-cms no-comp no-crmf no-crypto-mdebug no-crypto-mdebug-backtrace no-ct no-demos no-deprecated no-des no-devcryptoeng no-dgram no-dh no-docs no-dsa no-dso no-dtls no-dtls1 no-dtls1_2 no-dynamic-engine no-ec no-ec2m no-ec_nistp_64_gcc_128 no-ecdh no-ecdsa no-ecx no-egd no-engine no-external-tests no-filenames no-fips no-fips-post no-fips-securitychecks no-fuzz-afl no-fuzz-libfuzzer no-gost no-h3demo no-idea no-jitter no-ktls no-loadereng no-md2 no-md4 no-mdc2 no-module no-msan no-multiblock no-nextprotoneg no-ocb no-ocsp no-padlockeng no-pie no-poly1305 no-psk no-qlog no-quic no-rc2 no-rc4 no-rc5 no-rmd160 no-sctp no-seed no-shared no-siphash no-siv no-sm2 no-sm3 no-sm4 no-srp no-srtp no-ssl-trace no-ssl3 no-ssl3-method no-tests no-tfo no-trace no-ts no-ubsan no-ui-console no-unit-test no-unstable-qlog no-uplink no-weak-ssl-ciphers no-whirlpool no-winstore no-zlib no-zlib-dynamic no-zstd no-zstd-dynamic
-CONFIGURE_ARGS=("no-apps", "no-asm", "no-async", "no-atexit", "no-autoalginit", "no-autoerrinit", "no-autoload-config", "no-bulk", "no-cached-fetch", "no-capieng", "no-cmp", "no-cms", "no-comp", "no-ct", "no-deprecated", "no-dgram", "no-docs", "no-dso", "no-dynamic-engine", "no-ec", "no-ec2m", "no-engine")
+OPTIONS= no-acvp-tests no-afalgeng no-argon2 no-aria no-asan no-asm no-async no-atexit no-autoload-config no-bf no-blake2 no-brotli no-brotli-dynamic no-buildtest-c++ no-bulk no-cached-fetch no-camellia no-capieng no-cast no-chacha no-cmac no-cmp no-cms no-comp no-crmf no-crypto-mdebug no-crypto-mdebug-backtrace no-ct no-default-thread-pool no-demos no-des no-devcryptoeng no-dgram no-dh no-dsa no-dso no-dtls no-dtls1 no-dtls1_2 no-dynamic-engine no-ec no-ec2m no-ec_nistp_64_gcc_128 no-ecdh no-ecdsa no-ecx no-egd no-engine no-err no-external-tests no-filenames no-fips no-fips-post no-fips-securitychecks no-fuzz-afl no-fuzz-libfuzzer no-gost no-h3demo no-idea no-jitter no-ktls no-loadereng no-md2 no-md4 no-mdc2 no-module no-msan no-multiblock no-nextprotoneg no-ocb no-ocsp no-padlockeng no-pie no-poly1305 no-posix-io no-psk no-qlog no-quic no-rc2 no-rc4 no-rc5 no-rdrand no-rfc3779 no-rmd160 no-sctp no-seed no-shared no-siphash no-siv no-sm2 no-sm3 no-sm4 no-sock no-srp no-srtp no-ssl-trace no-ssl3 no-ssl3-method no-tests no-tfo no-thread-pool no-threads no-trace no-ts no-ubsan no-ui-console no-unit-test no-unstable-qlog no-uplink no-weak-ssl-ciphers no-whirlpool no-winstore no-zlib no-zlib-dynamic no-zstd no-zstd-dynamic
+CONFIGURE_ARGS=("no-asm", "no-threads", "no-thread-pool", "no-bulk", "no-cached-fetch", "no-dgram", "no-engine", "no-err", "no-fips-securitychecks", "no-fips-post", "no-module", "no-multiblock", "no-nextprotoneg", "no-posix-io", "no-psk", "no-rdrand", "no-rfc3779", "no-sock", "no-tests", "no-quic", "no-ts", "no-uplink")
 SRCDIR=.
 BLDDIR=.
 FIPSKEY=f4556650ac31d35461610bac4ed81b1a181b2d8a43ea2854cbae22ca74560813
@@ -20,519 +20,546 @@ MINOR=5
 SHLIB_VERSION_NUMBER=3
 SHLIB_TARGET=darwin-shared
 
-LIBS=libcrypto.a libssl.a providers/libcommon.a providers/libdefault.a \
-     providers/liblegacy.a
+LIBS=apps/libapps.a libcrypto.a libssl.a providers/libcommon.a \
+     providers/libdefault.a providers/liblegacy.a
 SHLIBS=
 SHLIB_INFO=
 MODULES=
 FIPSMODULE=
 FIPSMODULENAME=
 
-PROGRAMS=
-SCRIPTS=util/shlib_wrap.sh util/wrap.pl
+PROGRAMS=apps/openssl
+SCRIPTS=apps/CA.pl apps/tsget.pl tools/c_rehash util/shlib_wrap.sh \
+        util/wrap.pl
 
-DEPS=crypto/libcrypto-lib-provider_core.d \
-     crypto/modes/libcrypto-lib-ccm128.d crypto/evp/libcrypto-lib-e_aria.d \
-     crypto/bn/libcrypto-lib-bn_ctx.d crypto/kdf/libcrypto-lib-kdf_err.d \
-     crypto/encode_decode/libcrypto-lib-encoder_lib.d \
-     crypto/asn1/libcrypto-lib-a_type.d crypto/asn1/libcrypto-lib-evp_asn1.d \
-     crypto/evp/libcrypto-lib-pmeth_check.d \
-     crypto/x509/libcrypto-lib-x509spki.d \
-     crypto/dso/libcrypto-lib-dso_win32.d \
-     crypto/txt_db/libcrypto-lib-txt_db.d crypto/x509/libcrypto-lib-x_all.d \
-     providers/implementations/kdfs/libdefault-lib-sshkdf.d \
-     crypto/ffc/libcrypto-lib-ffc_params_generate.d \
-     crypto/ffc/libcrypto-lib-ffc_params_validate.d \
-     crypto/x509/libcrypto-lib-pcy_cache.d \
-     crypto/asn1/libcrypto-lib-asn1_err.d \
-     crypto/libcrypto-lib-threads_none.d crypto/evp/libcrypto-lib-bio_md.d \
-     ssl/libssl-lib-d1_lib.d crypto/x509/libcrypto-lib-v3_bitst.d \
-     crypto/pem/libcrypto-lib-pem_lib.d \
-     providers/implementations/rands/libdefault-lib-seed_src.d \
-     crypto/bio/libcrypto-lib-bf_nbio.d \
-     crypto/libcrypto-lib-provider_child.d \
-     crypto/ffc/libcrypto-lib-ffc_key_validate.d \
-     ssl/record/methods/libssl-lib-ssl3_meth.d \
-     providers/implementations/exchange/libdefault-lib-kdf_exch.d \
-     crypto/x509/libcrypto-lib-v3_group_ac.d \
-     providers/common/libcommon-lib-provider_ctx.d \
-     crypto/x509/libcrypto-lib-t_x509.d \
-     crypto/asn1/libcrypto-lib-asn1_item_list.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm.d \
-     crypto/libcrypto-lib-indicator_core.d \
-     crypto/x509/libcrypto-lib-x509_def.d crypto/libcrypto-lib-o_init.d \
-     crypto/evp/libcrypto-lib-evp_key.d crypto/bio/libcrypto-lib-bss_fd.d \
-     crypto/evp/libcrypto-lib-evp_cnf.d crypto/asn1/libcrypto-lib-a_octet.d \
-     crypto/encode_decode/libcrypto-lib-encoder_err.d \
-     crypto/asn1/libcrypto-lib-d2i_param.d \
-     crypto/property/libcrypto-lib-property_err.d \
-     ssl/record/methods/libssl-lib-tls13_meth.d \
-     crypto/asn1/libcrypto-lib-t_pkey.d crypto/err/libcrypto-lib-err_mark.d \
-     crypto/x509/libcrypto-lib-pcy_lib.d \
-     providers/libcrypto-lib-legacyprov.d crypto/libcrypto-lib-core_fetch.d \
-     crypto/bio/libcrypto-lib-bss_dgram_pair.d \
-     crypto/evp/libcrypto-lib-p_verify.d \
-     crypto/store/libcrypto-lib-store_err.d \
-     crypto/ffc/libcrypto-lib-ffc_backend.d \
-     providers/implementations/rands/libdefault-lib-drbg_ctr.d \
-     crypto/conf/libcrypto-lib-conf_mall.d \
-     crypto/conf/libcrypto-lib-conf_def.d \
-     crypto/libcrypto-lib-deterministic_nonce.d \
-     crypto/http/libcrypto-lib-http_err.d \
-     crypto/property/libcrypto-lib-property_string.d \
-     crypto/evp/libcrypto-lib-e_xcbc_d.d \
-     providers/implementations/digests/libdefault-lib-sha3_prov.d \
-     crypto/libcrypto-lib-provider_predefined.d \
-     crypto/aes/libcrypto-lib-aes_misc.d crypto/x509/libcrypto-lib-v3_utl.d \
-     providers/implementations/kdfs/libdefault-lib-hmacdrbg_kdf.d \
-     crypto/asn1/libcrypto-lib-a_utf8.d crypto/bn/libcrypto-lib-bn_rand.d \
-     crypto/asn1/libcrypto-lib-a_strex.d \
-     crypto/asn1/libcrypto-lib-tasn_typ.d crypto/libcrypto-lib-passphrase.d \
-     crypto/x509/libcrypto-lib-v3_authattid.d ssl/libssl-lib-s3_lib.d \
-     crypto/x509/libcrypto-lib-x509_set.d ssl/libssl-lib-ssl_lib.d \
-     crypto/ui/libcrypto-lib-ui_util.d crypto/sha/libcrypto-lib-sha512.d \
-     providers/implementations/keymgmt/libdefault-lib-kdf_legacy_kmgmt.d \
-     crypto/libcrypto-lib-cversion.d crypto/x509/libcrypto-lib-t_acert.d \
-     providers/implementations/signature/libdefault-lib-rsa_sig.d \
-     crypto/rsa/libcrypto-lib-rsa_chk.d \
-     providers/implementations/macs/libdefault-lib-gmac_prov.d \
-     crypto/x509/libcrypto-lib-v3_audit_id.d \
-     crypto/bio/libcrypto-lib-bf_null.d crypto/evp/libcrypto-lib-m_null.d \
-     crypto/asn1/libcrypto-lib-i2d_evp.d \
-     crypto/thread/libcrypto-lib-internal.d \
-     providers/common/libdefault-lib-provider_seeding.d \
-     crypto/evp/libcrypto-lib-evp_pbe.d \
-     ssl/statem/libssl-lib-extensions_clnt.d \
-     crypto/ess/libcrypto-lib-ess_lib.d crypto/stack/libcrypto-lib-stack.d \
-     ssl/statem/libssl-lib-statem_clnt.d crypto/bn/libcrypto-lib-bn_add.d \
-     crypto/evp/libcrypto-lib-pbe_scrypt.d crypto/evp/libcrypto-lib-e_rc2.d \
-     crypto/x509/libcrypto-lib-x509cset.d \
-     crypto/rand/libcrypto-lib-prov_seed.d crypto/libcrypto-lib-o_fopen.d \
-     crypto/bn/libcrypto-lib-bn_sqr.d crypto/conf/libcrypto-lib-conf_err.d \
-     crypto/x509/libcrypto-lib-x_name.d crypto/asn1/libcrypto-lib-tasn_new.d \
-     crypto/rsa/libcrypto-lib-rsa_sign.d providers/libcrypto-lib-baseprov.d \
-     crypto/asn1/libcrypto-lib-nsseq.d crypto/asn1/libcrypto-lib-x_spki.d \
-     crypto/asn1/libcrypto-lib-a_gentm.d \
-     crypto/asn1/libcrypto-lib-x_bignum.d \
-     crypto/libcrypto-lib-threads_pthread.d crypto/evp/libcrypto-lib-p_lib.d \
-     providers/implementations/kdfs/libdefault-lib-tls1_prf.d \
-     providers/implementations/storemgmt/libdefault-lib-file_store.d \
-     providers/common/libdefault-lib-digest_to_nid.d \
-     crypto/x509/libcrypto-lib-x509aset.d crypto/dso/libcrypto-lib-dso_err.d \
-     ssl/libssl-lib-tls_depr.d ssl/statem/libssl-lib-extensions_srvr.d \
-     crypto/evp/libcrypto-lib-e_rc5.d crypto/asn1/libcrypto-lib-a_sign.d \
-     crypto/libcrypto-lib-punycode.d crypto/evp/libcrypto-lib-bio_b64.d \
-     ssl/libssl-lib-t1_enc.d crypto/rsa/libcrypto-lib-rsa_saos.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm_hw.d \
-     ssl/statem/libssl-lib-statem_lib.d crypto/rand/libcrypto-lib-rand_err.d \
-     crypto/asn1/libcrypto-lib-a_mbstr.d crypto/bio/libcrypto-lib-bss_mem.d \
-     ssl/libssl-lib-ssl_rsa.d crypto/x509/libcrypto-lib-v3_pcons.d \
-     crypto/bn/libcrypto-lib-bn_exp2.d \
-     providers/common/libdefault-lib-provider_util.d \
-     crypto/x509/libcrypto-lib-v3_usernotice.d \
-     crypto/pkcs12/libcrypto-lib-p12_decr.d \
-     crypto/conf/libcrypto-lib-conf_sap.d \
-     crypto/pkcs12/libcrypto-lib-p12_mutl.d \
-     crypto/x509/libcrypto-lib-v3_lib.d crypto/x509/libcrypto-lib-v3_admis.d \
-     crypto/x509/libcrypto-lib-v3_asid.d \
-     providers/implementations/kdfs/libdefault-lib-scrypt.d \
-     crypto/x509/libcrypto-lib-v3_san.d crypto/modes/libcrypto-lib-xts128.d \
-     crypto/lhash/libcrypto-lib-lhash.d \
-     ssl/record/methods/libcommon-lib-tls_pad.d \
-     crypto/bn/libcrypto-lib-bn_mod.d crypto/objects/libcrypto-lib-obj_dat.d \
-     crypto/evp/libcrypto-lib-p_legacy.d crypto/rsa/libcrypto-lib-rsa_gen.d \
-     crypto/buffer/libcrypto-lib-buf_err.d crypto/bio/libcrypto-lib-bio_cb.d \
-     crypto/asn1/libcrypto-lib-t_bitst.d \
-     providers/implementations/rands/seeding/libdefault-lib-rand_tsc.d \
-     crypto/rsa/libcrypto-lib-rsa_ossl.d \
-     providers/implementations/rands/libdefault-lib-drbg_hmac.d \
-     crypto/libcrypto-lib-o_dir.d crypto/hpke/libcrypto-lib-hpke.d \
-     providers/implementations/digests/libcommon-lib-digestcommon.d \
-     crypto/bn/libcrypto-lib-bn_gcd.d \
-     providers/implementations/kem/libdefault-lib-rsa_kem.d \
-     crypto/libcrypto-lib-params_idx.d crypto/rsa/libcrypto-lib-rsa_lib.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_pem2der.d \
-     crypto/dso/libcrypto-lib-dso_vms.d crypto/pem/libcrypto-lib-pem_all.d \
-     crypto/bio/libcrypto-lib-bio_sock.d crypto/asn1/libcrypto-lib-x_val.d \
-     crypto/evp/libcrypto-lib-kdf_lib.d \
-     crypto/property/libcrypto-lib-property_parse.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_der2key.d \
-     crypto/err/libcrypto-lib-err_save.d crypto/libcrypto-lib-uid.d \
-     ssl/libssl-lib-ssl_conf.d crypto/x509/libcrypto-lib-v3_utf8.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm_hw.d \
-     providers/implementations/kdfs/liblegacy-lib-pbkdf1.d \
-     crypto/evp/libcrypto-lib-c_allc.d \
-     providers/implementations/encode_decode/libdefault-lib-endecoder_common.d \
-     crypto/x509/libcrypto-lib-v3_akid.d crypto/x509/libcrypto-lib-v3err.d \
-     crypto/libcrypto-lib-cpt_err.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm.d \
-     crypto/evp/libcrypto-lib-e_chacha20_poly1305.d \
-     crypto/bn/libcrypto-lib-bn_div.d \
-     crypto/property/libcrypto-lib-property.d \
-     crypto/asn1/libcrypto-lib-d2i_pr.d crypto/x509/libcrypto-lib-v3_ncons.d \
-     crypto/conf/libcrypto-lib-conf_lib.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_wrp.d \
-     crypto/rsa/libcrypto-lib-rsa_sp800_56b_check.d \
-     crypto/bn/libcrypto-lib-bn_sqrt.d crypto/aes/libcrypto-lib-aes_ofb.d \
-     crypto/x509/libcrypto-lib-x509rset.d ssl/libssl-lib-ssl_cert.d \
-     ssl/libssl-lib-ssl_utst.d ssl/statem/libssl-lib-statem_srvr.d \
-     crypto/bio/libcrypto-lib-bio_print.d \
-     crypto/pkcs12/libcrypto-lib-p12_p8e.d \
-     crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha256.d \
-     crypto/store/libcrypto-lib-store_meth.d \
-     crypto/bn/libcrypto-lib-bn_conv.d ssl/libssl-lib-methods.d \
-     crypto/pem/libcrypto-lib-pem_pkey.d crypto/evp/libcrypto-lib-p5_crpt2.d \
-     ssl/libssl-lib-ssl_mcnf.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm_hw.d \
-     crypto/evp/libcrypto-lib-legacy_sha.d \
-     providers/implementations/rands/libdefault-lib-drbg.d \
-     crypto/x509/libcrypto-lib-v3_addr.d crypto/x509/libcrypto-lib-v3_iobo.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_spki2typespki.d \
-     crypto/x509/libcrypto-lib-x509_vfy.d \
-     crypto/pkcs12/libcrypto-lib-p12_key.d crypto/bn/libcrypto-lib-bn_lib.d \
-     crypto/libcrypto-lib-o_time.d crypto/x509/libcrypto-lib-x_exten.d \
-     crypto/evp/libcrypto-lib-ec_support.d \
-     crypto/pkcs12/libcrypto-lib-p12_add.d crypto/asn1/libcrypto-lib-f_int.d \
-     crypto/libcrypto-lib-comp_methods.d \
-     providers/common/libdefault-lib-bio_prov.d \
-     crypto/pkcs12/libcrypto-lib-p12_init.d \
-     crypto/asn1/libcrypto-lib-a_int.d crypto/x509/libcrypto-lib-v3_ac_tgt.d \
-     crypto/x509/libcrypto-lib-v3_pci.d crypto/asn1/libcrypto-lib-a_object.d \
-     crypto/store/libcrypto-lib-store_result.d \
-     crypto/bio/libcrypto-lib-bf_buff.d \
-     crypto/rand/libcrypto-lib-rand_pool.d \
-     crypto/x509/libcrypto-lib-by_store.d ssl/libssl-lib-ssl_sess.d \
-     crypto/conf/libcrypto-lib-conf_api.d \
-     crypto/x509/libcrypto-lib-v3_ind_iss.d \
-     crypto/bn/libcrypto-lib-bn_gf2m.d \
-     crypto/evp/libcrypto-lib-legacy_md5_sha1.d \
-     ssl/record/libssl-lib-rec_layer_s3.d ssl/libssl-lib-t1_lib.d \
-     providers/implementations/rands/libdefault-lib-test_rng.d \
-     crypto/x509/libcrypto-lib-v3_pku.d \
-     providers/implementations/rands/libdefault-lib-drbg_hash.d \
-     crypto/pem/libcrypto-lib-pem_oth.d ssl/libssl-lib-ssl_ciph.d \
-     ssl/statem/libssl-lib-extensions.d crypto/x509/libcrypto-lib-v3_sxnet.d \
-     crypto/lhash/libcrypto-lib-lh_stats.d \
-     crypto/evp/libcrypto-lib-p5_crpt.d crypto/evp/libcrypto-lib-evp_lib.d \
-     crypto/asn1/libcrypto-lib-x_sig.d crypto/libcrypto-lib-ebcdic.d \
-     crypto/evp/libcrypto-lib-pmeth_lib.d \
-     crypto/rsa/libcrypto-lib-rsa_pmeth.d \
-     crypto/asn1/libcrypto-lib-tasn_utl.d \
-     crypto/evp/libcrypto-lib-evp_pkey.d \
-     crypto/asn1/libcrypto-lib-a_strnid.d crypto/asn1/libcrypto-lib-x_pkey.d \
-     providers/implementations/encode_decode/libdefault-lib-encode_key2text.d \
-     crypto/pkcs12/libcrypto-lib-p12_utl.d crypto/evp/libcrypto-lib-e_cast.d \
-     crypto/bn/libcrypto-lib-bn_shift.d \
-     crypto/objects/libcrypto-lib-o_names.d crypto/libcrypto-lib-mem_clr.d \
-     crypto/aes/libcrypto-lib-aes_ecb.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_fips.d \
-     crypto/md5/libcrypto-lib-md5_sha1.d \
-     crypto/x509/libcrypto-lib-v3_rolespec.d \
-     crypto/asn1/libcrypto-lib-a_i2d_fp.d providers/libcrypto-lib-nullprov.d \
-     crypto/x509/libcrypto-lib-x_x509.d \
-     crypto/x509/libcrypto-lib-v3_soa_id.d \
-     crypto/modes/libcrypto-lib-xts128gb.d \
-     crypto/rsa/libcrypto-lib-rsa_x931.d crypto/ui/libcrypto-lib-ui_lib.d \
-     crypto/aes/libcrypto-lib-aes_wrap.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_epki2pki.d \
-     crypto/evp/libcrypto-lib-ec_ctrl.d crypto/bio/libcrypto-lib-bss_log.d \
-     crypto/encode_decode/libcrypto-lib-encoder_meth.d \
-     crypto/property/libcrypto-lib-property_query.d \
-     crypto/x509/libcrypto-lib-t_req.d crypto/libcrypto-lib-core_algorithm.d \
-     crypto/rsa/libcrypto-lib-rsa_sp800_56b_gen.d \
-     crypto/pkcs12/libcrypto-lib-p12_kiss.d crypto/libcrypto-lib-o_str.d \
-     ssl/record/libssl-lib-rec_layer_d1.d \
-     crypto/x509/libcrypto-lib-x509_att.d crypto/pem/libcrypto-lib-pem_pk8.d \
-     crypto/libcrypto-lib-threads_lib.d \
-     providers/implementations/digests/libdefault-lib-md5_sha1_prov.d \
-     providers/common/libdefault-lib-securitycheck.d \
-     crypto/pkcs12/libcrypto-lib-p12_asn.d \
-     crypto/store/libcrypto-lib-store_lib.d crypto/err/libcrypto-lib-err.d \
-     crypto/asn1/libcrypto-lib-ameth_lib.d \
-     crypto/x509/libcrypto-lib-x509_txt.d \
-     crypto/asn1/libcrypto-lib-x_algor.d crypto/asn1/libcrypto-lib-a_time.d \
-     providers/implementations/encode_decode/libdefault-lib-encode_key2any.d \
-     crypto/libcrypto-lib-sleep.d crypto/bio/libcrypto-lib-bio_lib.d \
-     ssl/record/methods/libdefault-lib-ssl3_cbc.d \
-     crypto/ess/libcrypto-lib-ess_err.d crypto/evp/libcrypto-lib-c_alld.d \
-     crypto/asn1/libcrypto-lib-a_digest.d \
-     crypto/bio/libcrypto-lib-bf_readbuff.d \
-     providers/implementations/kdfs/libdefault-lib-pbkdf2.d \
-     ssl/libssl-lib-t1_trce.d crypto/bn/libcrypto-lib-bn_mpi.d \
-     crypto/rand/libcrypto-lib-rand_uniform.d crypto/evp/libcrypto-lib-kem.d \
-     ssl/libssl-lib-bio_ssl.d crypto/hmac/libcrypto-lib-hmac.d \
-     ssl/libssl-lib-s3_enc.d \
-     crypto/evp/libcrypto-lib-ctrl_params_translate.d \
-     crypto/rsa/libcrypto-lib-rsa_pss.d crypto/modes/libcrypto-lib-gcm128.d \
-     crypto/libcrypto-lib-trace.d crypto/ffc/libcrypto-lib-ffc_dh.d \
-     crypto/evp/libcrypto-lib-keymgmt_lib.d \
-     crypto/property/libcrypto-lib-defn_cache.d \
-     crypto/err/libcrypto-lib-err_prn.d crypto/x509/libcrypto-lib-v3_int.d \
-     providers/implementations/digests/libdefault-lib-md5_prov.d \
-     providers/libcrypto-lib-defltprov.d ssl/libssl-lib-ssl_cert_comp.d \
-     crypto/thread/arch/libcrypto-lib-thread_posix.d \
-     crypto/asn1/libcrypto-lib-d2i_pu.d \
-     providers/implementations/digests/libdefault-lib-null_prov.d \
-     crypto/libcrypto-lib-params.d crypto/evp/libcrypto-lib-evp_fetch.d \
-     crypto/aes/libcrypto-lib-aes_cfb.d crypto/conf/libcrypto-lib-conf_mod.d \
-     crypto/x509/libcrypto-lib-v3_cpols.d crypto/bn/libcrypto-lib-bn_asm.d \
-     crypto/hashtable/libcrypto-lib-hashtable.d \
-     crypto/asn1/libcrypto-lib-a_print.d \
-     crypto/x509/libcrypto-lib-x_attrib.d crypto/libcrypto-lib-provider.d \
-     crypto/x509/libcrypto-lib-pcy_node.d \
-     crypto/pkcs7/libcrypto-lib-pk7_mime.d \
-     crypto/rand/libcrypto-lib-rand_lib.d crypto/x509/libcrypto-lib-v3_prn.d \
-     crypto/bn/libcrypto-lib-bn_print.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha256_hw.d \
-     crypto/sha/libcrypto-lib-sha3.d crypto/x509/libcrypto-lib-v3_conf.d \
-     crypto/pem/libcrypto-lib-pem_x509.d crypto/libcrypto-lib-params_dup.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm_hw.d \
-     crypto/x509/libcrypto-lib-x509_lu.d crypto/x509/libcrypto-lib-v3_sda.d \
-     crypto/sha/libcrypto-lib-sha256.d \
-     crypto/async/arch/libcrypto-lib-async_null.d \
-     ssl/record/methods/libssl-lib-tls_common.d \
-     crypto/x509/libcrypto-lib-v3_enum.d \
-     crypto/x509/libcrypto-lib-x509_vpm.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_null.d \
-     crypto/ess/libcrypto-lib-ess_asn1.d \
-     crypto/pkcs12/libcrypto-lib-p12_attr.d \
-     crypto/pkcs7/libcrypto-lib-pk7_lib.d \
-     crypto/asn1/libcrypto-lib-asn1_gen.d ssl/libssl-lib-ssl_err_legacy.d \
-     crypto/asn1/libcrypto-lib-asn_mime.d ssl/libssl-lib-tls13_enc.d \
-     crypto/aes/libcrypto-lib-aes_cbc.d crypto/evp/libcrypto-lib-evp_utils.d \
-     crypto/pem/libcrypto-lib-pem_info.d crypto/bn/libcrypto-lib-bn_recp.d \
-     crypto/x509/libcrypto-lib-x509_ext.d \
-     crypto/pkcs12/libcrypto-lib-pk12err.d \
-     crypto/bio/libcrypto-lib-bss_sock.d \
-     crypto/bio/libcrypto-lib-bf_prefix.d crypto/evp/libcrypto-lib-digest.d \
-     crypto/x509/libcrypto-lib-x509_obj.d \
-     ssl/record/methods/libssl-lib-dtls_meth.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_pvk2key.d \
-     crypto/libcrypto-lib-defaults.d \
-     providers/implementations/macs/libdefault-lib-hmac_prov.d \
-     crypto/async/arch/libcrypto-lib-async_win.d \
-     crypto/ffc/libcrypto-lib-ffc_key_generate.d \
-     crypto/evp/libcrypto-lib-encode.d crypto/asn1/libcrypto-lib-tasn_scn.d \
-     crypto/err/libcrypto-lib-err_blocks.d crypto/bn/libcrypto-lib-bn_mul.d \
-     crypto/asn1/libcrypto-lib-x_info.d crypto/libcrypto-lib-getenv.d \
-     crypto/pem/libcrypto-lib-pvkfmt.d crypto/evp/libcrypto-lib-e_sm4.d \
-     crypto/ui/libcrypto-lib-ui_null.d crypto/sha/libcrypto-lib-keccak1600.d \
-     crypto/md5/libcrypto-lib-md5_one.d crypto/x509/libcrypto-lib-pcy_map.d \
-     crypto/bn/libcrypto-lib-bn_mont.d \
-     crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha1.d \
-     crypto/modes/libcrypto-lib-ctr128.d crypto/bio/libcrypto-lib-bss_file.d \
-     providers/common/der/libcommon-lib-der_digests_gen.d \
+DEPS=crypto/aes/libcrypto-lib-aes_misc.d crypto/libcrypto-lib-o_time.d \
      crypto/err/libcrypto-lib-err_all_legacy.d \
-     providers/implementations/encode_decode/libdefault-lib-decode_msblob2key.d \
-     providers/common/der/libcommon-lib-der_wrap_gen.d \
-     crypto/x509/libcrypto-lib-x509_err.d ssl/libssl-lib-d1_srtp.d \
-     crypto/x509/libcrypto-lib-v3_bcons.d crypto/thread/libcrypto-lib-api.d \
-     crypto/aes/libcrypto-lib-aes_core.d crypto/evp/libcrypto-lib-kdf_meth.d \
-     crypto/buffer/libcrypto-lib-buffer.d \
-     crypto/x509/libcrypto-lib-v3_pcia.d crypto/evp/libcrypto-lib-p_open.d \
-     crypto/err/libcrypto-lib-err_all.d \
-     crypto/evp/libcrypto-lib-dh_support.d \
-     providers/implementations/kdfs/libdefault-lib-argon2.d \
-     crypto/bio/libcrypto-lib-bio_sock2.d \
-     crypto/pkcs12/libcrypto-lib-p12_p8d.d \
-     crypto/libcrypto-lib-param_build_set.d \
-     crypto/evp/libcrypto-lib-mac_meth.d crypto/pem/libcrypto-lib-pem_sign.d \
-     crypto/evp/libcrypto-lib-e_rc4.d crypto/pkcs12/libcrypto-lib-p12_npas.d \
-     crypto/http/libcrypto-lib-http_lib.d \
-     providers/libcrypto-lib-prov_running.d \
-     ssl/rio/libssl-lib-poll_immediate.d \
-     crypto/evp/libcrypto-lib-cmeth_lib.d \
-     crypto/sha/libcrypto-lib-sha1dgst.d crypto/modes/libcrypto-lib-cbc128.d \
-     providers/common/libdefault-lib-capabilities.d \
-     crypto/evp/libcrypto-lib-evp_rand.d \
-     crypto/x509/libcrypto-lib-x_ietfatt.d crypto/evp/libcrypto-lib-p_seal.d \
-     crypto/pkcs7/libcrypto-lib-pk7_smime.d \
-     crypto/evp/libcrypto-lib-bio_enc.d crypto/x509/libcrypto-lib-x509_r2x.d \
-     crypto/bn/libcrypto-lib-bn_word.d crypto/evp/libcrypto-lib-e_des.d \
-     crypto/asn1/libcrypto-lib-a_dup.d crypto/bio/libcrypto-lib-bf_lbuf.d \
-     crypto/libcrypto-lib-der_writer.d crypto/libcrypto-lib-ex_data.d \
-     crypto/asn1/libcrypto-lib-tasn_prn.d \
-     providers/implementations/signature/libdefault-lib-mac_legacy_sig.d \
-     ssl/record/methods/libssl-lib-tls1_meth.d \
-     crypto/asn1/libcrypto-lib-tasn_enc.d crypto/libcrypto-lib-threads_win.d \
-     crypto/rsa/libcrypto-lib-rsa_schemes.d \
-     crypto/asn1/libcrypto-lib-a_bitstr.d \
-     crypto/pkcs7/libcrypto-lib-pk7_doit.d \
-     crypto/evp/libcrypto-lib-evp_err.d \
-     providers/common/libdefault-lib-securitycheck_default.d \
-     crypto/bn/libcrypto-lib-bn_intern.d crypto/libcrypto-lib-cpuid.d \
-     crypto/bio/libcrypto-lib-bss_dgram.d \
-     crypto/rsa/libcrypto-lib-rsa_oaep.d \
-     crypto/x509/libcrypto-lib-pcy_data.d \
-     providers/common/libcommon-lib-provider_err.d \
-     crypto/asn1/libcrypto-lib-p5_pbev2.d \
-     crypto/libcrypto-lib-params_from_text.d \
-     crypto/x509/libcrypto-lib-v3_tlsf.d \
-     crypto/store/libcrypto-lib-store_strings.d \
-     providers/implementations/rands/seeding/libdefault-lib-rand_win.d \
-     ssl/libssl-lib-d1_msg.d crypto/bn/libcrypto-lib-bn_nist.d \
-     crypto/x509/libcrypto-lib-x509_meth.d \
-     ssl/statem/libssl-lib-statem_dtls.d crypto/evp/libcrypto-lib-pmeth_gn.d \
-     ssl/libssl-lib-ssl_init.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts.d \
-     crypto/evp/libcrypto-lib-bio_ok.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_hw.d \
-     crypto/rand/libcrypto-lib-randfile.d ssl/libssl-lib-ssl_txt.d \
-     ssl/libssl-lib-s3_msg.d crypto/evp/libcrypto-lib-legacy_md5.d \
-     crypto/x509/libcrypto-lib-t_crl.d \
-     providers/implementations/asymciphers/libdefault-lib-rsa_enc.d \
-     crypto/dso/libcrypto-lib-dso_dlfcn.d \
-     providers/implementations/rands/seeding/libdefault-lib-rand_cpu_x86.d \
-     ssl/record/methods/libssl-lib-tls_multib.d \
-     crypto/x509/libcrypto-lib-x_crl.d \
-     crypto/objects/libcrypto-lib-obj_lib.d \
-     crypto/libcrypto-lib-core_namemap.d crypto/rsa/libcrypto-lib-rsa_meth.d \
-     crypto/asn1/libcrypto-lib-t_spki.d crypto/modes/libcrypto-lib-cts128.d \
-     crypto/modes/libcrypto-lib-wrap128.d \
-     crypto/http/libcrypto-lib-http_client.d \
-     crypto/evp/libcrypto-lib-dh_ctrl.d \
-     crypto/rand/libcrypto-lib-rand_deprecated.d \
-     crypto/x509/libcrypto-lib-x509_acert.d \
-     crypto/x509/libcrypto-lib-x509_d2.d crypto/sha/libcrypto-lib-sha1_one.d \
-     crypto/bio/libcrypto-lib-bss_conn.d crypto/bio/libcrypto-lib-bio_addr.d \
-     crypto/x509/libcrypto-lib-v3_crld.d crypto/x509/libcrypto-lib-by_file.d \
-     crypto/libcrypto-lib-self_test_core.d \
-     crypto/modes/libcrypto-lib-ofb128.d crypto/rsa/libcrypto-lib-rsa_pk1.d \
-     crypto/evp/libcrypto-lib-mac_lib.d ssl/statem/libssl-lib-statem.d \
-     crypto/bio/libcrypto-lib-ossl_core_bio.d \
-     crypto/rsa/libcrypto-lib-rsa_none.d crypto/bio/libcrypto-lib-bss_acpt.d \
-     providers/implementations/macs/libdefault-lib-kmac_prov.d \
-     crypto/x509/libcrypto-lib-x509_req.d crypto/bn/libcrypto-lib-bn_const.d \
-     crypto/libcrypto-lib-quic_vlint.d crypto/libcrypto-lib-asn1_dsa.d \
-     crypto/x509/libcrypto-lib-v3_genn.d crypto/x509/libcrypto-lib-v3_ist.d \
+     crypto/property/libcrypto-lib-defn_cache.d apps/openssl-bin-storeutl.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm.d \
+     crypto/x509/libcrypto-lib-v3_san.d crypto/conf/libcrypto-lib-conf_mod.d \
+     crypto/bio/libcrypto-lib-bss_conn.d \
      crypto/encode_decode/libcrypto-lib-encoder_pkey.d \
-     crypto/x509/libcrypto-lib-v3_pmaps.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha.d \
-     crypto/encode_decode/libcrypto-lib-decoder_pkey.d \
-     crypto/objects/libcrypto-lib-obj_xref.d \
-     providers/implementations/kdfs/liblegacy-lib-pvkkdf.d \
-     crypto/evp/libcrypto-lib-e_idea.d crypto/x509/libcrypto-lib-pcy_tree.d \
-     crypto/libcrypto-lib-ctype.d \
-     providers/implementations/rands/libdefault-lib-seed_src_jitter.d \
-     providers/implementations/kdfs/libdefault-lib-x942kdf.d \
-     crypto/libcrypto-lib-param_build.d \
-     providers/implementations/storemgmt/libdefault-lib-file_store_any2obj.d \
-     crypto/pkcs7/libcrypto-lib-pk7_attr.d crypto/libcrypto-lib-bsearch.d \
-     crypto/libcrypto-lib-initthread.d \
-     providers/implementations/digests/libdefault-lib-sha2_prov.d \
-     crypto/pkcs12/libcrypto-lib-p12_crpt.d \
-     crypto/bio/libcrypto-lib-bss_null.d crypto/bn/libcrypto-lib-bn_dh.d \
-     crypto/async/arch/libcrypto-lib-async_posix.d \
-     crypto/modes/libcrypto-lib-siv128.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm.d \
-     crypto/bn/libcrypto-lib-bn_err.d crypto/bn/libcrypto-lib-bn_exp.d \
-     crypto/x509/libcrypto-lib-v3_no_rev_avail.d \
-     crypto/rsa/libcrypto-lib-rsa_mp_names.d \
-     crypto/pkcs7/libcrypto-lib-pkcs7err.d \
-     crypto/bio/libcrypto-lib-bio_meth.d crypto/x509/libcrypto-lib-x_req.d \
-     crypto/x509/libcrypto-lib-x509name.d \
-     crypto/encode_decode/libcrypto-lib-decoder_lib.d \
-     crypto/libcrypto-lib-info.d \
-     providers/implementations/kdfs/libdefault-lib-hkdf.d \
-     crypto/asn1/libcrypto-lib-p8_pkey.d \
-     crypto/asn1/libcrypto-lib-asn_mstbl.d \
-     providers/common/der/libcommon-lib-der_rsa_gen.d \
-     crypto/asn1/libcrypto-lib-a_utctm.d crypto/evp/libcrypto-lib-evp_enc.d \
-     crypto/x509/libcrypto-lib-v3_ia5.d \
-     crypto/ffc/libcrypto-lib-ffc_params.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha1_hw.d \
-     crypto/ui/libcrypto-lib-ui_openssl.d \
-     providers/implementations/kdfs/libdefault-lib-pbkdf2_fips.d \
-     crypto/bio/libcrypto-lib-bss_core.d \
-     crypto/libcrypto-lib-provider_conf.d \
-     crypto/x509/libcrypto-lib-x509_cmp.d crypto/evp/libcrypto-lib-e_des3.d \
-     crypto/x509/libcrypto-lib-by_dir.d \
-     ssl/record/methods/libssl-lib-tlsany_meth.d \
-     crypto/bio/libcrypto-lib-bio_dump.d crypto/modes/libcrypto-lib-ocb128.d \
-     crypto/x509/libcrypto-lib-v3_no_ass.d \
-     crypto/asn1/libcrypto-lib-f_string.d \
-     providers/implementations/kdfs/libdefault-lib-sskdf.d \
-     crypto/asn1/libcrypto-lib-asn1_lib.d ssl/libssl-lib-ssl_asn1.d \
-     crypto/evp/libcrypto-lib-exchange.d \
-     crypto/asn1/libcrypto-lib-bio_ndef.d \
-     crypto/asn1/libcrypto-lib-asn_moid.d \
-     crypto/hpke/libcrypto-lib-hpke_util.d \
-     crypto/pkcs7/libcrypto-lib-bio_pk7.d \
-     crypto/x509/libcrypto-lib-x_x509a.d \
-     providers/implementations/encode_decode/libdefault-lib-encode_key2ms.d \
-     providers/implementations/kdfs/libdefault-lib-kbkdf.d \
-     crypto/objects/libcrypto-lib-obj_err.d \
-     crypto/asn1/libcrypto-lib-bio_asn1.d \
-     crypto/x509/libcrypto-lib-x_pubkey.d \
-     crypto/asn1/libcrypto-lib-asn1_parse.d \
-     crypto/x509/libcrypto-lib-v3_akeya.d crypto/evp/libcrypto-lib-e_null.d \
-     providers/common/der/libdefault-lib-der_rsa_sig.d \
-     crypto/bn/libcrypto-lib-bn_rsa_fips186_4.d crypto/libcrypto-lib-mem.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_block.d \
-     ssl/libssl-lib-tls_srp.d crypto/rsa/libcrypto-lib-rsa_ameth.d \
-     crypto/libcrypto-lib-cryptlib.d crypto/pem/libcrypto-lib-pem_err.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon.d \
-     crypto/bio/libcrypto-lib-bio_err.d \
-     crypto/x509/libcrypto-lib-v3_single_use.d \
-     crypto/asn1/libcrypto-lib-x_int64.d ssl/libssl-lib-ssl_err.d \
-     crypto/pkcs7/libcrypto-lib-pk7_asn1.d \
-     crypto/asn1/libcrypto-lib-p5_pbe.d crypto/rsa/libcrypto-lib-rsa_asn1.d \
+     crypto/rand/libcrypto-lib-prov_seed.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm_hw.d \
+     crypto/x509/libcrypto-lib-v3_rolespec.d \
+     crypto/asn1/libcrypto-lib-t_pkey.d crypto/evp/libcrypto-lib-p_legacy.d \
+     crypto/libcrypto-lib-params.d ssl/libssl-lib-bio_ssl.d \
+     apps/lib/libapps-lib-app_x509.d crypto/buffer/libcrypto-lib-buf_err.d \
+     crypto/asn1/libcrypto-lib-tasn_prn.d crypto/libcrypto-lib-threads_lib.d \
+     crypto/x509/libcrypto-lib-x509_r2x.d \
+     crypto/bio/libcrypto-lib-bio_addr.d \
      crypto/asn1/libcrypto-lib-asn_pack.d \
-     crypto/encode_decode/libcrypto-lib-decoder_err.d \
-     crypto/dso/libcrypto-lib-dso_dl.d \
-     crypto/thread/arch/libcrypto-lib-thread_none.d \
-     crypto/dso/libcrypto-lib-dso_openssl.d \
-     crypto/encode_decode/libcrypto-lib-decoder_meth.d \
-     crypto/async/libcrypto-lib-async.d \
-     crypto/evp/libcrypto-lib-e_rc4_hmac_md5.d \
-     providers/implementations/rands/seeding/libdefault-lib-rand_unix.d \
-     ssl/statem/libssl-lib-extensions_cust.d \
-     crypto/rsa/libcrypto-lib-rsa_prn.d crypto/bn/libcrypto-lib-bn_prime.d \
-     providers/implementations/keymgmt/libdefault-lib-rsa_kmgmt.d \
-     crypto/libcrypto-lib-time.d crypto/evp/libcrypto-lib-m_sigver.d \
-     crypto/evp/libcrypto-lib-e_bf.d crypto/asn1/libcrypto-lib-tasn_dec.d \
-     crypto/conf/libcrypto-lib-conf_ssl.d \
-     providers/implementations/kdfs/libdefault-lib-krb5kdf.d \
-     crypto/x509/libcrypto-lib-v3_purp.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_cts.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_hw.d \
-     crypto/evp/libcrypto-lib-dsa_ctrl.d crypto/bio/libcrypto-lib-bss_bio.d \
-     crypto/rsa/libcrypto-lib-rsa_err.d crypto/thread/libcrypto-lib-arch.d \
-     crypto/dso/libcrypto-lib-dso_lib.d \
+     crypto/objects/libcrypto-lib-obj_xref.d apps/openssl-bin-ca.d \
+     crypto/evp/libcrypto-lib-dh_ctrl.d crypto/asn1/libcrypto-lib-t_bitst.d \
+     providers/libcrypto-lib-baseprov.d \
+     crypto/asn1/libcrypto-lib-asn1_parse.d \
+     crypto/asn1/libcrypto-lib-a_print.d apps/openssl-bin-smime.d \
+     crypto/asn1/libcrypto-lib-asn_mime.d \
+     crypto/x509/libcrypto-lib-v3_info.d \
      crypto/async/libcrypto-lib-async_err.d \
-     crypto/bn/libcrypto-lib-bn_kron.d crypto/libcrypto-lib-init.d \
-     crypto/libcrypto-lib-context.d \
-     providers/implementations/keymgmt/libdefault-lib-mac_legacy_kmgmt.d \
-     ssl/libssl-lib-pqueue.d crypto/md5/libcrypto-lib-md5_dgst.d \
-     crypto/x509/libcrypto-lib-v3_battcons.d \
-     crypto/async/libcrypto-lib-async_wait.d \
-     crypto/evp/libcrypto-lib-names.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_spki2typespki.d \
+     crypto/evp/libcrypto-lib-p_verify.d ssl/libssl-lib-tls_depr.d \
+     apps/openssl-bin-x509.d \
      providers/implementations/ciphers/libdefault-lib-cipher_aes.d \
-     crypto/x509/libcrypto-lib-v3_extku.d \
-     crypto/x509/libcrypto-lib-x509_trust.d \
-     crypto/pem/libcrypto-lib-pem_xaux.d \
-     crypto/evp/libcrypto-lib-keymgmt_meth.d \
-     crypto/asn1/libcrypto-lib-tasn_fre.d \
-     crypto/asn1/libcrypto-lib-a_verify.d \
-     crypto/x509/libcrypto-lib-x509_v3.d crypto/modes/libcrypto-lib-cfb128.d \
-     crypto/pkcs12/libcrypto-lib-p12_sbag.d crypto/libcrypto-lib-mem_sec.d \
-     crypto/pkcs12/libcrypto-lib-p12_crt.d \
-     crypto/thread/arch/libcrypto-lib-thread_win.d \
-     providers/implementations/kdfs/libdefault-lib-pkcs12kdf.d \
-     crypto/rsa/libcrypto-lib-rsa_mp.d \
-     providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm.d \
-     crypto/libcrypto-lib-packet.d crypto/asn1/libcrypto-lib-p5_scrypt.d \
-     crypto/bn/libcrypto-lib-bn_blind.d crypto/x509/libcrypto-lib-v3_info.d \
+     crypto/x509/libcrypto-lib-pcy_map.d crypto/evp/libcrypto-lib-p_lib.d \
+     crypto/rand/libcrypto-lib-rand_lib.d \
+     crypto/encode_decode/libcrypto-lib-encoder_err.d \
+     crypto/libcrypto-lib-ctype.d apps/openssl-bin-pkey.d \
+     crypto/evp/libcrypto-lib-e_idea.d \
+     providers/implementations/digests/libcommon-lib-digestcommon.d \
+     crypto/x509/libcrypto-lib-v3_genn.d \
+     crypto/x509/libcrypto-lib-x509cset.d crypto/ess/libcrypto-lib-ess_lib.d \
+     crypto/pkcs12/libcrypto-lib-p12_asn.d crypto/evp/libcrypto-lib-e_des3.d \
+     crypto/pkcs7/libcrypto-lib-pk7_lib.d crypto/libcrypto-lib-mem_clr.d \
+     crypto/asn1/libcrypto-lib-a_type.d crypto/x509/libcrypto-lib-v3_extku.d \
+     apps/lib/libapps-lib-app_libctx.d \
+     crypto/x509/libcrypto-lib-v3_usernotice.d \
+     crypto/asn1/libcrypto-lib-a_utctm.d ssl/statem/libssl-lib-statem_dtls.d \
+     crypto/evp/libcrypto-lib-names.d crypto/x509/libcrypto-lib-x_pubkey.d \
+     crypto/ffc/libcrypto-lib-ffc_key_validate.d \
+     crypto/ffc/libcrypto-lib-ffc_params_validate.d \
+     crypto/bn/libcrypto-lib-bn_div.d crypto/bn/libcrypto-lib-bn_recp.d \
+     crypto/bio/libcrypto-lib-bf_readbuff.d \
+     crypto/property/libcrypto-lib-property_parse.d \
+     crypto/dso/libcrypto-lib-dso_lib.d \
+     apps/lib/libapps-lib-apps_opt_printf.d \
+     crypto/dso/libcrypto-lib-dso_dlfcn.d \
+     crypto/store/libcrypto-lib-store_strings.d \
+     crypto/bio/libcrypto-lib-bss_acpt.d \
+     crypto/x509/libcrypto-lib-v3_no_rev_avail.d \
+     ssl/record/methods/libssl-lib-tls_common.d \
+     crypto/libcrypto-lib-param_build.d crypto/asn1/libcrypto-lib-x_info.d \
+     crypto/libcrypto-lib-mem_sec.d crypto/evp/libcrypto-lib-evp_rand.d \
+     crypto/libcrypto-lib-provider_child.d \
+     crypto/bio/libcrypto-lib-bss_file.d \
+     crypto/thread/arch/libcrypto-lib-thread_win.d ssl/libssl-lib-s3_enc.d \
+     crypto/evp/libcrypto-lib-bio_md.d crypto/pkcs12/libcrypto-lib-p12_p8d.d \
+     crypto/dso/libcrypto-lib-dso_openssl.d crypto/libcrypto-lib-mem.d \
+     crypto/x509/libcrypto-lib-x509_obj.d \
+     crypto/asn1/libcrypto-lib-i2d_evp.d crypto/err/libcrypto-lib-err_prn.d \
+     ssl/statem/libssl-lib-statem_lib.d crypto/x509/libcrypto-lib-x_exten.d \
+     providers/implementations/kdfs/libdefault-lib-pbkdf2_fips.d \
+     ssl/statem/libssl-lib-extensions_srvr.d \
+     crypto/evp/libcrypto-lib-evp_fetch.d crypto/rsa/libcrypto-lib-rsa_gen.d \
+     crypto/evp/libcrypto-lib-e_rc4.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm.d \
+     crypto/evp/libcrypto-lib-pmeth_gn.d \
+     crypto/modes/libcrypto-lib-wrap128.d apps/lib/libapps-lib-s_cb.d \
+     crypto/async/arch/libcrypto-lib-async_null.d \
+     crypto/bio/libcrypto-lib-bf_null.d \
+     providers/common/libdefault-lib-provider_util.d \
+     providers/implementations/kdfs/libdefault-lib-hkdf.d \
+     crypto/pkcs12/libcrypto-lib-p12_p8e.d \
+     crypto/modes/libcrypto-lib-ofb128.d crypto/x509/libcrypto-lib-x_crl.d \
+     crypto/x509/libcrypto-lib-v3_purp.d crypto/evp/libcrypto-lib-e_aes.d \
+     crypto/encode_decode/libcrypto-lib-decoder_lib.d \
+     crypto/evp/libcrypto-lib-exchange.d \
+     crypto/libcrypto-lib-self_test_core.d \
+     crypto/evp/libcrypto-lib-e_chacha20_poly1305.d \
+     crypto/asn1/libcrypto-lib-bio_asn1.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm.d \
+     crypto/evp/libcrypto-lib-evp_key.d \
+     crypto/evp/libcrypto-lib-keymgmt_lib.d apps/openssl-bin-s_time.d \
+     crypto/bn/libcrypto-lib-bn_mpi.d crypto/asn1/libcrypto-lib-nsseq.d \
+     crypto/bio/libcrypto-lib-bss_null.d \
+     crypto/x509/libcrypto-lib-v3_ind_iss.d \
+     crypto/evp/libcrypto-lib-dsa_ctrl.d crypto/rsa/libcrypto-lib-rsa_meth.d \
      providers/common/der/libcommon-lib-der_rsa_key.d \
-     crypto/evp/libcrypto-lib-e_aes.d crypto/evp/libcrypto-lib-signature.d \
-     crypto/libcrypto-lib-sparse_array.d \
-     providers/implementations/ciphers/libcommon-lib-ciphercommon_hw.d \
-     crypto/asn1/libcrypto-lib-a_d2i_fp.d \
-     crypto/x509/libcrypto-lib-v3_skid.d crypto/rsa/libcrypto-lib-rsa_crpt.d \
-     ssl/libssl-lib-ssl_stat.d crypto/evp/libcrypto-lib-p_sign.d \
-     crypto/ui/libcrypto-lib-ui_err.d crypto/bn/libcrypto-lib-bn_srp.d \
+     crypto/ess/libcrypto-lib-ess_asn1.d \
+     providers/implementations/rands/seeding/libdefault-lib-rand_win.d \
+     apps/openssl-bin-openssl.d crypto/bn/libcrypto-lib-bn_lib.d \
+     crypto/md5/libcrypto-lib-md5_sha1.d ssl/libssl-lib-ssl_sess.d \
+     crypto/ffc/libcrypto-lib-ffc_backend.d \
+     crypto/modes/libcrypto-lib-gcm128.d crypto/libcrypto-lib-bsearch.d \
+     crypto/evp/libcrypto-lib-encode.d crypto/libcrypto-lib-getenv.d \
+     crypto/rsa/libcrypto-lib-rsa_none.d \
+     crypto/x509/libcrypto-lib-v3_bcons.d crypto/pem/libcrypto-lib-pem_pk8.d \
+     crypto/evp/libcrypto-lib-kem.d crypto/evp/libcrypto-lib-mac_meth.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_hw.d \
+     crypto/conf/libcrypto-lib-conf_def.d \
+     crypto/x509/libcrypto-lib-pcy_node.d \
+     crypto/x509/libcrypto-lib-v3_single_use.d \
+     crypto/x509/libcrypto-lib-t_acert.d \
+     crypto/pkcs7/libcrypto-lib-pkcs7err.d \
+     crypto/encode_decode/libcrypto-lib-decoder_meth.d \
+     crypto/evp/libcrypto-lib-c_alld.d \
+     crypto/property/libcrypto-lib-property.d \
+     crypto/asn1/libcrypto-lib-p5_pbev2.d \
+     crypto/x509/libcrypto-lib-x509type.d apps/openssl-bin-req.d \
+     crypto/evp/libcrypto-lib-bio_enc.d crypto/bio/libcrypto-lib-bio_dump.d \
+     crypto/libcrypto-lib-indicator_core.d \
+     crypto/pkcs12/libcrypto-lib-p12_sbag.d \
+     crypto/evp/libcrypto-lib-pmeth_lib.d \
+     crypto/evp/libcrypto-lib-e_xcbc_d.d apps/openssl-bin-pkcs7.d \
+     providers/implementations/kdfs/libdefault-lib-pbkdf2.d \
+     crypto/sha/libcrypto-lib-sha1dgst.d crypto/rsa/libcrypto-lib-rsa_lib.d \
+     crypto/x509/libcrypto-lib-x_ietfatt.d \
+     crypto/libcrypto-lib-provider_conf.d \
+     crypto/store/libcrypto-lib-store_err.d apps/openssl-bin-list.d \
+     ssl/statem/libssl-lib-extensions.d \
+     providers/implementations/kem/libdefault-lib-rsa_kem.d \
+     crypto/x509/libcrypto-lib-v3_utl.d \
+     crypto/x509/libcrypto-lib-x509_trust.d \
+     crypto/pkcs7/libcrypto-lib-pk7_asn1.d \
+     crypto/pkcs12/libcrypto-lib-p12_key.d \
+     crypto/pkcs12/libcrypto-lib-p12_decr.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_fips.d \
+     ssl/libssl-lib-ssl_rsa.d crypto/evp/libcrypto-lib-signature.d \
+     crypto/x509/libcrypto-lib-v3_ncons.d \
+     crypto/rsa/libcrypto-lib-rsa_mp_names.d \
+     providers/implementations/rands/seeding/libdefault-lib-rand_tsc.d \
+     crypto/evp/libcrypto-lib-p5_crpt2.d \
+     providers/common/libdefault-lib-provider_seeding.d \
+     crypto/modes/libcrypto-lib-cfb128.d ssl/libssl-lib-ssl_init.d \
+     crypto/x509/libcrypto-lib-x509_lu.d crypto/dso/libcrypto-lib-dso_err.d \
+     providers/implementations/rands/libdefault-lib-test_rng.d \
+     apps/lib/libapps-lib-names.d ssl/record/libssl-lib-rec_layer_d1.d \
+     crypto/x509/libcrypto-lib-v3_cpols.d \
+     providers/implementations/signature/libdefault-lib-mac_legacy_sig.d \
+     crypto/ffc/libcrypto-lib-ffc_params_generate.d \
+     crypto/x509/libcrypto-lib-v3err.d \
+     crypto/libcrypto-lib-deterministic_nonce.d \
+     crypto/encode_decode/libcrypto-lib-decoder_pkey.d \
+     crypto/asn1/libcrypto-lib-tasn_fre.d \
+     crypto/err/libcrypto-lib-err_mark.d apps/openssl-bin-crl2pkcs7.d \
+     crypto/pem/libcrypto-lib-pem_sign.d \
+     crypto/property/libcrypto-lib-property_string.d \
+     crypto/libcrypto-lib-provider_core.d apps/openssl-bin-s_client.d \
+     crypto/rsa/libcrypto-lib-rsa_oaep.d crypto/pem/libcrypto-lib-pem_info.d \
+     crypto/evp/libcrypto-lib-e_rc5.d crypto/evp/libcrypto-lib-evp_err.d \
+     apps/openssl-bin-rand.d crypto/asn1/libcrypto-lib-x_val.d \
+     crypto/pem/libcrypto-lib-pem_oth.d \
+     crypto/property/libcrypto-lib-property_err.d \
+     providers/common/libdefault-lib-securitycheck.d \
+     crypto/evp/libcrypto-lib-p_enc.d ssl/libssl-lib-d1_msg.d \
+     crypto/ui/libcrypto-lib-ui_lib.d apps/openssl-bin-prime.d \
+     crypto/asn1/libcrypto-lib-a_digest.d \
+     crypto/evp/libcrypto-lib-cmeth_lib.d crypto/dso/libcrypto-lib-dso_dl.d \
+     crypto/evp/libcrypto-lib-evp_utils.d crypto/libcrypto-lib-cpt_err.d \
+     crypto/asn1/libcrypto-lib-bio_ndef.d \
+     crypto/evp/libcrypto-lib-dh_support.d \
+     providers/libcrypto-lib-defltprov.d \
+     providers/common/der/libcommon-lib-der_digests_gen.d \
+     crypto/x509/libcrypto-lib-x509_acert.d \
+     ssl/rio/libssl-lib-poll_immediate.d \
+     crypto/rsa/libcrypto-lib-rsa_sp800_56b_gen.d \
+     crypto/x509/libcrypto-lib-by_file.d \
+     providers/implementations/kdfs/libdefault-lib-kbkdf.d \
+     crypto/asn1/libcrypto-lib-x_sig.d crypto/evp/libcrypto-lib-e_bf.d \
+     crypto/x509/libcrypto-lib-x509_ext.d crypto/x509/libcrypto-lib-x_req.d \
+     crypto/evp/libcrypto-lib-c_allc.d ssl/libssl-lib-ssl_err_legacy.d \
+     crypto/bn/libcrypto-lib-bn_shift.d crypto/evp/libcrypto-lib-m_sigver.d \
+     crypto/x509/libcrypto-lib-pcy_lib.d \
+     crypto/x509/libcrypto-lib-x509_def.d crypto/libcrypto-lib-core_fetch.d \
+     crypto/bio/libcrypto-lib-bss_dgram.d ssl/libssl-lib-t1_lib.d \
+     crypto/sha/libcrypto-lib-sha1_one.d crypto/bn/libcrypto-lib-bn_word.d \
+     crypto/x509/libcrypto-lib-x509_req.d \
+     ssl/record/methods/libdefault-lib-ssl3_cbc.d \
+     providers/implementations/kdfs/libdefault-lib-sshkdf.d \
+     crypto/pkcs12/libcrypto-lib-p12_crt.d \
+     crypto/x509/libcrypto-lib-v3_bitst.d apps/openssl-bin-enc.d \
+     crypto/x509/libcrypto-lib-v3_int.d crypto/bn/libcrypto-lib-bn_nist.d \
+     crypto/x509/libcrypto-lib-v3_lib.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_hw.d \
+     crypto/x509/libcrypto-lib-x509rset.d crypto/libcrypto-lib-params_idx.d \
+     crypto/asn1/libcrypto-lib-d2i_pr.d crypto/bn/libcrypto-lib-bn_asm.d \
+     crypto/sha/libcrypto-lib-sha3.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_pvk2key.d \
+     crypto/stack/libcrypto-lib-stack.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha256_hw.d \
+     ssl/libssl-lib-ssl_utst.d crypto/hpke/libcrypto-lib-hpke_util.d \
+     crypto/pem/libcrypto-lib-pem_all.d \
+     crypto/evp/libcrypto-lib-asymcipher.d \
+     crypto/x509/libcrypto-lib-v3_soa_id.d \
+     crypto/aes/libcrypto-lib-aes_cfb.d crypto/bio/libcrypto-lib-bss_sock.d \
+     crypto/rsa/libcrypto-lib-rsa_ossl.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha1_hw.d \
+     crypto/evp/libcrypto-lib-e_rc2.d apps/lib/libapps-lib-app_rand.d \
+     crypto/modes/libcrypto-lib-ctr128.d apps/lib/libapps-lib-app_provider.d \
+     crypto/hpke/libcrypto-lib-hpke.d crypto/pem/libcrypto-lib-pem_err.d \
+     providers/implementations/rands/libdefault-lib-seed_src_jitter.d \
+     crypto/asn1/libcrypto-lib-tasn_dec.d \
+     ssl/statem/libssl-lib-statem_clnt.d \
+     crypto/store/libcrypto-lib-store_register.d \
+     crypto/pem/libcrypto-lib-pem_x509.d crypto/x509/libcrypto-lib-t_crl.d \
+     providers/implementations/keymgmt/libdefault-lib-rsa_kmgmt.d \
+     crypto/bn/libcrypto-lib-bn_sqr.d ssl/libssl-lib-ssl_asn1.d \
+     crypto/ffc/libcrypto-lib-ffc_params.d ssl/libssl-lib-ssl_cert.d \
+     ssl/libssl-lib-s3_msg.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_wrp.d \
+     providers/implementations/encode_decode/libdefault-lib-encode_key2text.d \
+     crypto/rand/libcrypto-lib-rand_deprecated.d \
+     crypto/rsa/libcrypto-lib-rsa_crpt.d \
+     crypto/pkcs7/libcrypto-lib-pk7_attr.d \
+     crypto/objects/libcrypto-lib-obj_err.d apps/openssl-bin-crl.d \
+     crypto/x509/libcrypto-lib-x509_err.d \
+     crypto/x509/libcrypto-lib-x509_att.d ssl/libssl-lib-ssl_mcnf.d \
+     crypto/x509/libcrypto-lib-v3_sxnet.d \
+     crypto/pkcs12/libcrypto-lib-p12_add.d \
+     crypto/bn/libcrypto-lib-bn_rsa_fips186_4.d \
+     crypto/asn1/libcrypto-lib-a_i2d_fp.d \
+     ssl/record/methods/libssl-lib-tlsany_meth.d \
+     crypto/rand/libcrypto-lib-rand_err.d \
+     crypto/async/arch/libcrypto-lib-async_posix.d \
+     crypto/rsa/libcrypto-lib-rsa_pk1.d \
+     crypto/asn1/libcrypto-lib-p5_scrypt.d crypto/libcrypto-lib-trace.d \
+     crypto/bn/libcrypto-lib-bn_gcd.d crypto/libcrypto-lib-threads_pthread.d \
+     crypto/bn/libcrypto-lib-bn_gf2m.d apps/openssl-bin-pkcs12.d \
+     crypto/x509/libcrypto-lib-x509_vfy.d \
+     crypto/asn1/libcrypto-lib-ameth_lib.d apps/lib/libapps-lib-app_params.d \
+     providers/common/libdefault-lib-capabilities.d \
+     crypto/asn1/libcrypto-lib-x_int64.d apps/lib/libapps-lib-apps_ui.d \
+     crypto/pkcs7/libcrypto-lib-pk7_mime.d crypto/bn/libcrypto-lib-bn_rand.d \
+     crypto/bn/libcrypto-lib-bn_srp.d crypto/evp/libcrypto-lib-ec_ctrl.d \
+     crypto/pem/libcrypto-lib-pem_xaux.d \
+     crypto/conf/libcrypto-lib-conf_api.d apps/openssl-bin-version.d \
+     crypto/ui/libcrypto-lib-ui_openssl.d \
+     crypto/x509/libcrypto-lib-x509_txt.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm_hw.d \
+     crypto/conf/libcrypto-lib-conf_mall.d crypto/bn/libcrypto-lib-bn_dh.d \
+     crypto/bio/libcrypto-lib-bio_meth.d \
+     crypto/pkcs12/libcrypto-lib-p12_kiss.d \
+     crypto/asn1/libcrypto-lib-x_long.d crypto/asn1/libcrypto-lib-x_pkey.d \
+     providers/libcrypto-lib-nullprov.d crypto/asn1/libcrypto-lib-f_string.d \
+     crypto/err/libcrypto-lib-err.d crypto/x509/libcrypto-lib-t_req.d \
+     crypto/asn1/libcrypto-lib-p8_pkey.d crypto/libcrypto-lib-defaults.d \
+     crypto/x509/libcrypto-lib-v3_sda.d crypto/dso/libcrypto-lib-dso_win32.d \
+     crypto/http/libcrypto-lib-http_err.d apps/openssl-bin-progs.d \
+     providers/implementations/kdfs/liblegacy-lib-pvkkdf.d \
+     crypto/evp/libcrypto-lib-e_rc4_hmac_md5.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_cts.d \
+     crypto/evp/libcrypto-lib-e_old.d crypto/x509/libcrypto-lib-v3_admis.d \
+     crypto/rsa/libcrypto-lib-rsa_asn1.d crypto/err/libcrypto-lib-err_all.d \
+     crypto/async/libcrypto-lib-async_wait.d \
+     providers/implementations/digests/libdefault-lib-sha3_prov.d \
+     providers/implementations/encode_decode/libdefault-lib-encode_key2ms.d \
+     crypto/x509/libcrypto-lib-v3_pcons.d crypto/libcrypto-lib-o_dir.d \
+     apps/openssl-bin-nseq.d crypto/err/libcrypto-lib-err_blocks.d \
+     apps/openssl-bin-info.d crypto/modes/libcrypto-lib-cbc128.d \
+     crypto/x509/libcrypto-lib-x509_cmp.d crypto/bio/libcrypto-lib-bio_lib.d \
+     crypto/x509/libcrypto-lib-v3_audit_id.d \
+     crypto/aes/libcrypto-lib-aes_cbc.d crypto/x509/libcrypto-lib-v3_pku.d \
+     providers/libcrypto-lib-prov_running.d \
+     providers/implementations/kdfs/libdefault-lib-x942kdf.d \
+     crypto/evp/libcrypto-lib-pmeth_check.d \
+     providers/implementations/kdfs/libdefault-lib-scrypt.d \
+     crypto/rand/libcrypto-lib-rand_uniform.d \
+     crypto/rand/libcrypto-lib-rand_meth.d \
+     crypto/x509/libcrypto-lib-by_store.d apps/openssl-bin-ciphers.d \
+     crypto/sha/libcrypto-lib-sha256.d \
+     crypto/hashtable/libcrypto-lib-hashtable.d ssl/libssl-lib-tls_srp.d \
+     crypto/bn/libcrypto-lib-bn_mod.d crypto/libcrypto-lib-provider.d \
+     crypto/libcrypto-lib-o_init.d \
+     providers/implementations/encode_decode/libdefault-lib-encode_key2any.d \
+     crypto/x509/libcrypto-lib-x509_d2.d ssl/libssl-lib-t1_enc.d \
+     crypto/x509/libcrypto-lib-v3_pmaps.d apps/openssl-bin-rsautl.d \
+     crypto/asn1/libcrypto-lib-d2i_param.d crypto/libcrypto-lib-cversion.d \
+     apps/lib/libapps-lib-engine.d crypto/x509/libcrypto-lib-v3_battcons.d \
+     crypto/md5/libcrypto-lib-md5_one.d ssl/libssl-lib-t1_trce.d \
+     crypto/libcrypto-lib-sleep.d crypto/x509/libcrypto-lib-v3_akid.d \
+     crypto/x509/libcrypto-lib-v3_akeya.d \
+     crypto/asn1/libcrypto-lib-tasn_enc.d crypto/bio/libcrypto-lib-bio_err.d \
+     ssl/libssl-lib-ssl_txt.d crypto/asn1/libcrypto-lib-a_verify.d \
+     apps/openssl-bin-passwd.d crypto/bio/libcrypto-lib-bio_cb.d \
+     crypto/libcrypto-lib-param_build_set.d \
+     crypto/x509/libcrypto-lib-pcy_cache.d \
+     crypto/x509/libcrypto-lib-x509_vpm.d \
      crypto/rsa/libcrypto-lib-rsa_backend.d \
-     crypto/evp/libcrypto-lib-asymcipher.d
+     crypto/bn/libcrypto-lib-bn_sqrt.d \
+     crypto/pkcs12/libcrypto-lib-p12_init.d \
+     crypto/x509/libcrypto-lib-v3_tlsf.d \
+     crypto/pkcs12/libcrypto-lib-p12_utl.d \
+     crypto/asn1/libcrypto-lib-tasn_new.d \
+     crypto/property/libcrypto-lib-property_query.d ssl/libssl-lib-pqueue.d \
+     crypto/pkcs12/libcrypto-lib-p12_attr.d \
+     providers/implementations/macs/libdefault-lib-kmac_prov.d \
+     providers/implementations/storemgmt/libdefault-lib-file_store.d \
+     providers/implementations/rands/libdefault-lib-drbg.d \
+     crypto/bn/libcrypto-lib-bn_ctx.d \
+     providers/common/libcommon-lib-provider_err.d \
+     crypto/x509/libcrypto-lib-pcy_data.d crypto/libcrypto-lib-ebcdic.d \
+     crypto/x509/libcrypto-lib-v3_pcia.d ssl/libssl-lib-ssl_err.d \
+     crypto/lhash/libcrypto-lib-lh_stats.d \
+     providers/implementations/kdfs/libdefault-lib-pkcs12kdf.d \
+     crypto/bn/libcrypto-lib-bn_exp.d crypto/x509/libcrypto-lib-x509_meth.d \
+     apps/openssl-bin-spkac.d apps/openssl-bin-pkeyutl.d \
+     ssl/libssl-lib-ssl_cert_comp.d crypto/bio/libcrypto-lib-bss_fd.d \
+     crypto/libcrypto-lib-ex_data.d \
+     providers/implementations/digests/libdefault-lib-md5_prov.d \
+     ssl/record/methods/libssl-lib-tls_multib.d \
+     crypto/libcrypto-lib-context.d ssl/statem/libssl-lib-extensions_clnt.d \
+     crypto/encode_decode/libcrypto-lib-encoder_lib.d \
+     crypto/asn1/libcrypto-lib-a_d2i_fp.d crypto/aes/libcrypto-lib-aes_ecb.d \
+     crypto/asn1/libcrypto-lib-asn1_gen.d \
+     providers/implementations/rands/libdefault-lib-seed_src.d \
+     crypto/bn/libcrypto-lib-bn_mul.d crypto/ui/libcrypto-lib-ui_null.d \
+     apps/lib/libapps-lib-engine_loader.d crypto/bn/libcrypto-lib-bn_depr.d \
+     crypto/asn1/libcrypto-lib-a_int.d crypto/x509/libcrypto-lib-x_attrib.d \
+     crypto/x509/libcrypto-lib-v3_pci.d crypto/bio/libcrypto-lib-bf_nbio.d \
+     crypto/libcrypto-lib-time.d \
+     crypto/evp/libcrypto-lib-ctrl_params_translate.d apps/openssl-bin-mac.d \
+     crypto/evp/libcrypto-lib-p_dec.d apps/openssl-bin-rsa.d \
+     providers/implementations/rands/seeding/libdefault-lib-rand_unix.d \
+     crypto/modes/libcrypto-lib-xts128.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_block.d \
+     crypto/evp/libcrypto-lib-e_sm4.d \
+     providers/common/libcommon-lib-provider_ctx.d \
+     crypto/bio/libcrypto-lib-bio_sock.d crypto/x509/libcrypto-lib-v3_addr.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_xts.d \
+     crypto/rsa/libcrypto-lib-rsa_saos.d \
+     crypto/evp/libcrypto-lib-legacy_sha.d ssl/libssl-lib-tls13_enc.d \
+     crypto/bio/libcrypto-lib-bf_buff.d \
+     crypto/objects/libcrypto-lib-o_names.d \
+     crypto/evp/libcrypto-lib-p_open.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm_hw.d \
+     crypto/encode_decode/libcrypto-lib-encoder_meth.d \
+     crypto/thread/libcrypto-lib-api.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_der2key.d \
+     ssl/libssl-lib-d1_srtp.d crypto/libcrypto-lib-o_fopen.d \
+     crypto/asn1/libcrypto-lib-x_bignum.d \
+     ssl/statem/libssl-lib-extensions_cust.d \
+     providers/common/der/libdefault-lib-der_rsa_sig.d \
+     crypto/pkcs7/libcrypto-lib-bio_pk7.d apps/openssl-bin-pkcs8.d \
+     crypto/ess/libcrypto-lib-ess_err.d crypto/asn1/libcrypto-lib-f_int.d \
+     crypto/asn1/libcrypto-lib-t_spki.d crypto/modes/libcrypto-lib-cts128.d \
+     providers/libcrypto-lib-legacyprov.d \
+     crypto/store/libcrypto-lib-store_init.d \
+     crypto/bn/libcrypto-lib-bn_blind.d crypto/sha/libcrypto-lib-sha512.d \
+     apps/openssl-bin-fipsinstall.d crypto/libcrypto-lib-quic_vlint.d \
+     crypto/evp/libcrypto-lib-evp_pkey.d \
+     crypto/pkcs7/libcrypto-lib-pk7_smime.d \
+     crypto/http/libcrypto-lib-http_lib.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_msblob2key.d \
+     crypto/x509/libcrypto-lib-v3_no_ass.d \
+     crypto/bn/libcrypto-lib-bn_print.d \
+     crypto/bio/libcrypto-lib-bss_dgram_pair.d \
+     crypto/asn1/libcrypto-lib-a_mbstr.d crypto/bio/libcrypto-lib-bss_mem.d \
+     providers/common/der/libcommon-lib-der_rsa_gen.d \
+     providers/implementations/keymgmt/libdefault-lib-mac_legacy_kmgmt.d \
+     crypto/x509/libcrypto-lib-v3_utf8.d crypto/bio/libcrypto-lib-bss_log.d \
+     crypto/evp/libcrypto-lib-evp_pbe.d \
+     providers/implementations/digests/libdefault-lib-null_prov.d \
+     crypto/evp/libcrypto-lib-bio_ok.d crypto/x509/libcrypto-lib-v3_ia5.d \
+     ssl/libssl-lib-ssl_ciph.d crypto/asn1/libcrypto-lib-a_utf8.d \
+     crypto/pkcs12/libcrypto-lib-p12_mutl.d apps/openssl-bin-speed.d \
+     crypto/evp/libcrypto-lib-bio_b64.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_epki2pki.d \
+     crypto/bio/libcrypto-lib-bio_sock2.d crypto/asn1/libcrypto-lib-x_spki.d \
+     crypto/pkcs7/libcrypto-lib-pk7_doit.d \
+     crypto/evp/libcrypto-lib-kdf_lib.d crypto/bio/libcrypto-lib-bf_prefix.d \
+     crypto/libcrypto-lib-cpuid.d \
+     providers/implementations/kdfs/liblegacy-lib-pbkdf1.d \
+     providers/implementations/signature/libdefault-lib-rsa_sig.d \
+     crypto/objects/libcrypto-lib-obj_lib.d \
+     crypto/rsa/libcrypto-lib-rsa_pss.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha.d \
+     crypto/libcrypto-lib-sparse_array.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_null.d \
+     providers/common/libdefault-lib-bio_prov.d \
+     crypto/modes/libcrypto-lib-ocb128.d \
+     crypto/asn1/libcrypto-lib-asn_mstbl.d \
+     crypto/evp/libcrypto-lib-legacy_md5_sha1.d \
+     crypto/asn1/libcrypto-lib-a_sign.d \
+     providers/implementations/exchange/libdefault-lib-kdf_exch.d \
+     ssl/record/methods/libssl-lib-tls13_meth.d \
+     crypto/asn1/libcrypto-lib-a_dup.d \
+     crypto/pkcs12/libcrypto-lib-p12_crpt.d \
+     crypto/evp/libcrypto-lib-p5_crpt.d crypto/asn1/libcrypto-lib-tasn_typ.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon_hw.d \
+     providers/implementations/macs/libdefault-lib-hmac_prov.d \
+     crypto/asn1/libcrypto-lib-d2i_pu.d crypto/libcrypto-lib-cryptlib.d \
+     crypto/libcrypto-lib-packet.d crypto/aes/libcrypto-lib-aes_ige.d \
+     providers/implementations/kdfs/libdefault-lib-sskdf.d \
+     crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha256.d \
+     providers/implementations/digests/libdefault-lib-md5_sha1_prov.d \
+     crypto/x509/libcrypto-lib-x509_set.d \
+     providers/implementations/digests/libdefault-lib-sha2_prov.d \
+     providers/common/libdefault-lib-digest_to_nid.d \
+     crypto/modes/libcrypto-lib-ccm128.d crypto/evp/libcrypto-lib-evp_lib.d \
+     crypto/x509/libcrypto-lib-x509aset.d crypto/evp/libcrypto-lib-e_des.d \
+     crypto/asn1/libcrypto-lib-p5_pbe.d crypto/asn1/libcrypto-lib-asn1_err.d \
+     crypto/evp/libcrypto-lib-keymgmt_meth.d \
+     crypto/libcrypto-lib-core_algorithm.d \
+     crypto/aes/libcrypto-lib-aes_ofb.d crypto/hmac/libcrypto-lib-hmac.d \
+     crypto/err/libcrypto-lib-err_save.d crypto/kdf/libcrypto-lib-kdf_err.d \
+     crypto/txt_db/libcrypto-lib-txt_db.d crypto/bio/libcrypto-lib-bf_lbuf.d \
+     ssl/libssl-lib-methods.d apps/lib/libapps-lib-http_server.d \
+     crypto/http/libcrypto-lib-http_client.d \
+     crypto/libcrypto-lib-params_dup.d crypto/pem/libcrypto-lib-pem_lib.d \
+     ssl/libssl-lib-d1_lib.d \
+     providers/implementations/rands/libdefault-lib-drbg_ctr.d \
+     apps/openssl-bin-genrsa.d crypto/x509/libcrypto-lib-pcy_tree.d \
+     crypto/libcrypto-lib-threads_none.d crypto/lhash/libcrypto-lib-lhash.d \
+     crypto/asn1/libcrypto-lib-tasn_scn.d crypto/bn/libcrypto-lib-bn_x931p.d \
+     providers/implementations/rands/libdefault-lib-drbg_hmac.d \
+     providers/implementations/encode_decode/libdefault-lib-endecoder_common.d \
+     ssl/libssl-lib-ssl_rsa_legacy.d crypto/dso/libcrypto-lib-dso_vms.d \
+     crypto/sha/libcrypto-lib-keccak1600.d \
+     crypto/libcrypto-lib-threads_win.d crypto/x509/libcrypto-lib-x509name.d \
+     crypto/libcrypto-lib-provider_predefined.d \
+     apps/lib/libapps-lib-s_socket.d \
+     providers/implementations/ciphers/libcommon-lib-ciphercommon.d \
+     crypto/x509/libcrypto-lib-t_x509.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm_hw.d \
+     crypto/conf/libcrypto-lib-conf_ssl.d \
+     providers/implementations/kdfs/libdefault-lib-argon2.d \
+     crypto/x509/libcrypto-lib-v3_ac_tgt.d \
+     ssl/record/methods/libssl-lib-dtls_meth.d apps/lib/libapps-lib-apps.d \
+     crypto/x509/libcrypto-lib-v3_ist.d crypto/evp/libcrypto-lib-evp_enc.d \
+     apps/lib/libapps-lib-columns.d crypto/md5/libcrypto-lib-md5_dgst.d \
+     crypto/libcrypto-lib-init.d crypto/store/libcrypto-lib-store_lib.d \
+     apps/lib/libapps-lib-opt.d crypto/asn1/libcrypto-lib-a_object.d \
+     crypto/bn/libcrypto-lib-bn_prime.d crypto/asn1/libcrypto-lib-a_time.d \
+     crypto/store/libcrypto-lib-store_meth.d \
+     crypto/conf/libcrypto-lib-conf_lib.d ssl/libssl-lib-ssl_stat.d \
+     crypto/evp/libcrypto-lib-e_aria.d apps/lib/libapps-lib-log.d \
+     crypto/x509/libcrypto-lib-v3_conf.d \
+     crypto/x509/libcrypto-lib-v3_group_ac.d \
+     crypto/rsa/libcrypto-lib-rsa_mp.d crypto/x509/libcrypto-lib-x_name.d \
+     crypto/x509/libcrypto-lib-x_x509a.d \
+     crypto/asn1/libcrypto-lib-evp_asn1.d crypto/x509/libcrypto-lib-by_dir.d \
+     crypto/aes/libcrypto-lib-aes_core.d crypto/ffc/libcrypto-lib-ffc_dh.d \
+     providers/implementations/rands/libdefault-lib-drbg_hash.d \
+     crypto/ffc/libcrypto-lib-ffc_key_generate.d apps/openssl-bin-errstr.d \
+     crypto/evp/libcrypto-lib-e_cast.d crypto/bn/libcrypto-lib-bn_err.d \
+     crypto/libcrypto-lib-o_str.d crypto/rand/libcrypto-lib-rand_pool.d \
+     crypto/buffer/libcrypto-lib-buffer.d \
+     providers/implementations/kdfs/libdefault-lib-hmacdrbg_kdf.d \
+     providers/implementations/rands/seeding/libdefault-lib-rand_cpu_x86.d \
+     crypto/asn1/libcrypto-lib-asn1_lib.d crypto/libcrypto-lib-info.d \
+     crypto/asn1/libcrypto-lib-a_bitstr.d \
+     crypto/modes/libcrypto-lib-xts128gb.d \
+     ssl/record/methods/libssl-lib-tls1_meth.d apps/openssl-bin-asn1parse.d \
+     crypto/evp/libcrypto-lib-e_null.d apps/openssl-bin-sess_id.d \
+     providers/common/der/libcommon-lib-der_wrap_gen.d \
+     providers/implementations/storemgmt/libdefault-lib-file_store_any2obj.d \
+     crypto/rsa/libcrypto-lib-rsa_pmeth.d \
+     providers/implementations/kdfs/libdefault-lib-tls1_prf.d \
+     apps/openssl-bin-genpkey.d crypto/bio/libcrypto-lib-bio_print.d \
+     crypto/evp/libcrypto-lib-kdf_meth.d crypto/libcrypto-lib-passphrase.d \
+     crypto/evp/libcrypto-lib-legacy_md5.d crypto/ui/libcrypto-lib-ui_util.d \
+     crypto/bn/libcrypto-lib-bn_mont.d ssl/record/libssl-lib-rec_layer_s3.d \
+     crypto/bn/libcrypto-lib-bn_conv.d crypto/libcrypto-lib-asn1_dsa.d \
+     crypto/bn/libcrypto-lib-bn_const.d crypto/bn/libcrypto-lib-bn_add.d \
+     apps/lib/libapps-lib-fmt.d \
+     crypto/encode_decode/libcrypto-lib-decoder_err.d \
+     crypto/rsa/libcrypto-lib-rsa_depr.d crypto/asn1/libcrypto-lib-a_octet.d \
+     crypto/x509/libcrypto-lib-v3_prn.d crypto/x509/libcrypto-lib-x_all.d \
+     ssl/statem/libssl-lib-statem_srvr.d crypto/libcrypto-lib-initthread.d \
+     crypto/rsa/libcrypto-lib-rsa_prn.d crypto/modes/libcrypto-lib-siv128.d \
+     crypto/rand/libcrypto-lib-randfile.d crypto/evp/libcrypto-lib-evp_cnf.d \
+     crypto/store/libcrypto-lib-store_result.d \
+     crypto/asn1/libcrypto-lib-asn1_item_list.d crypto/libcrypto-lib-uid.d \
+     crypto/bio/libcrypto-lib-ossl_core_bio.d \
+     crypto/async/arch/libcrypto-lib-async_win.d \
+     crypto/rsa/libcrypto-lib-rsa_x931.d apps/openssl-bin-pkeyparam.d \
+     crypto/bio/libcrypto-lib-bss_core.d crypto/x509/libcrypto-lib-x509_v3.d \
+     crypto/rsa/libcrypto-lib-rsa_sp800_56b_check.d \
+     crypto/bio/libcrypto-lib-bss_bio.d crypto/evp/libcrypto-lib-p_seal.d \
+     crypto/x509/libcrypto-lib-v3_iobo.d apps/openssl-bin-kdf.d \
+     crypto/x509/libcrypto-lib-v3_skid.d crypto/rsa/libcrypto-lib-rsa_sign.d \
+     ssl/libssl-lib-s3_lib.d crypto/pem/libcrypto-lib-pvkfmt.d \
+     crypto/aes/libcrypto-lib-aes_wrap.d \
+     crypto/evp/libcrypto-lib-ec_support.d crypto/libcrypto-lib-der_writer.d \
+     crypto/async/libcrypto-lib-async.d \
+     ssl/record/methods/libcommon-lib-tls_pad.d apps/openssl-bin-dgst.d \
+     apps/openssl-bin-verify.d \
+     providers/implementations/kdfs/libdefault-lib-krb5kdf.d \
+     crypto/asn1/libcrypto-lib-x_algor.d \
+     providers/common/libdefault-lib-securitycheck_default.d \
+     crypto/asn1/libcrypto-lib-tasn_utl.d apps/openssl-bin-s_server.d \
+     crypto/evp/libcrypto-lib-pbe_scrypt.d \
+     crypto/x509/libcrypto-lib-x_x509.d crypto/evp/libcrypto-lib-m_null.d \
+     crypto/evp/libcrypto-lib-mac_lib.d crypto/rsa/libcrypto-lib-rsa_ameth.d \
+     crypto/rsa/libcrypto-lib-rsa_x931g.d \
+     crypto/x509/libcrypto-lib-v3_authattid.d ssl/libssl-lib-ssl_lib.d \
+     crypto/libcrypto-lib-params_from_text.d \
+     providers/implementations/keymgmt/libdefault-lib-kdf_legacy_kmgmt.d \
+     crypto/pkcs12/libcrypto-lib-p12_npas.d \
+     crypto/pkcs12/libcrypto-lib-pk12err.d \
+     providers/implementations/encode_decode/libdefault-lib-decode_pem2der.d \
+     providers/implementations/macs/libdefault-lib-gmac_prov.d \
+     crypto/x509/libcrypto-lib-v3_crld.d crypto/x509/libcrypto-lib-v3_asid.d \
+     ssl/statem/libssl-lib-statem.d crypto/rsa/libcrypto-lib-rsa_err.d \
+     crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha1.d \
+     crypto/x509/libcrypto-lib-x509spki.d \
+     crypto/libcrypto-lib-core_namemap.d crypto/asn1/libcrypto-lib-a_strex.d \
+     crypto/bn/libcrypto-lib-bn_kron.d crypto/conf/libcrypto-lib-conf_err.d \
+     providers/implementations/asymciphers/libdefault-lib-rsa_enc.d \
+     crypto/bn/libcrypto-lib-bn_exp2.d \
+     crypto/rsa/libcrypto-lib-rsa_schemes.d crypto/ui/libcrypto-lib-ui_err.d \
+     apps/openssl-bin-rehash.d crypto/libcrypto-lib-punycode.d \
+     crypto/asn1/libcrypto-lib-a_gentm.d ssl/libssl-lib-ssl_conf.d \
+     crypto/conf/libcrypto-lib-conf_sap.d \
+     crypto/asn1/libcrypto-lib-asn_moid.d \
+     crypto/objects/libcrypto-lib-obj_dat.d \
+     crypto/rsa/libcrypto-lib-rsa_chk.d crypto/evp/libcrypto-lib-digest.d \
+     crypto/libcrypto-lib-comp_methods.d crypto/pem/libcrypto-lib-pem_pkey.d \
+     crypto/asn1/libcrypto-lib-a_strnid.d \
+     ssl/record/methods/libssl-lib-ssl3_meth.d \
+     crypto/evp/libcrypto-lib-p_sign.d \
+     providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm.d \
+     crypto/bn/libcrypto-lib-bn_intern.d crypto/x509/libcrypto-lib-v3_enum.d
 
 GENERATED_MANDATORY=OpenSSLConfigVersion.cmake crypto/params_idx.c \
                     exporters/OpenSSLConfigVersion.cmake \
@@ -579,7 +606,8 @@ GENERATED_PODS=doc/man1/openssl-asn1parse.pod doc/man1/openssl-ca.pod \
                doc/man1/openssl-storeutl.pod doc/man1/openssl-ts.pod \
                doc/man1/openssl-verify.pod doc/man1/openssl-version.pod \
                doc/man1/openssl-x509.pod doc/man7/openssl_user_macros.pod
-GENERATED=OpenSSLConfig.cmake builddata.pm crypto/buildinf.h crypto/params_idx.c \
+GENERATED=OpenSSLConfig.cmake apps/CA.pl apps/progs.c apps/progs.h apps/tsget.pl \
+     builddata.pm crypto/buildinf.h crypto/params_idx.c \
      doc/man1/openssl-asn1parse.pod doc/man1/openssl-ca.pod \
      doc/man1/openssl-ciphers.pod doc/man1/openssl-cmds.pod \
      doc/man1/openssl-cmp.pod doc/man1/openssl-cms.pod \
@@ -613,8 +641,8 @@ GENERATED=OpenSSLConfig.cmake builddata.pm crypto/buildinf.h crypto/params_idx.c
      providers/common/der/der_rsa_gen.c providers/common/der/der_wrap_gen.c \
      providers/common/include/prov/der_digests.h \
      providers/common/include/prov/der_rsa.h \
-     providers/common/include/prov/der_wrap.h util/shlib_wrap.sh \
-     util/wrap.pl
+     providers/common/include/prov/der_wrap.h tools/c_rehash \
+     util/shlib_wrap.sh util/wrap.pl
 
 INSTALL_LIBS=libcrypto.a libssl.a
 INSTALL_SHLIBS=
@@ -623,13 +651,13 @@ INSTALL_ENGINES=
 INSTALL_MODULES=
 INSTALL_FIPSMODULE=
 INSTALL_FIPSMODULECONF=providers/fipsmodule.cnf
-INSTALL_PROGRAMS=
+INSTALL_PROGRAMS=apps/openssl
 INSTALL_EXPORTERS_PKGCONFIG=exporters/libcrypto.pc exporters/libssl.pc \
                             exporters/openssl.pc
 INSTALL_EXPORTERS_CMAKE=exporters/OpenSSLConfig.cmake \
                         exporters/OpenSSLConfigVersion.cmake
-BIN_SCRIPTS=
-MISC_SCRIPTS=
+BIN_SCRIPTS=tools/c_rehash
+MISC_SCRIPTS=apps/CA.pl apps/tsget.pl:tsget
 IMAGEDOCS1=
 IMAGEDOCS3=
 IMAGEDOCS5=
@@ -2000,7 +2028,7 @@ TARFILE=        ../$(NAME).tar
 
 # Variables starting with CNF_ are common variables for all product types
 
-CNF_CPPFLAGS=-D_REENTRANT -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
+CNF_CPPFLAGS=-DOPENSSL_BUILDING_OPENSSL -DNDEBUG
 CNF_CFLAGS=-arch i386
 CNF_CXXFLAGS=
 CNF_LDFLAGS=-Wl,-search_paths_first
@@ -2029,7 +2057,7 @@ BIN_LDFLAGS=$(CNF_LDFLAGS) $(LDFLAGS)
 BIN_EX_LIBS=$(CNF_EX_LIBS) $(EX_LIBS)
 
 # CPPFLAGS_Q is used for one thing only: to build up buildinf.h
-CPPFLAGS_Q=-DL_ENDIAN -DOPENSSL_PIC -D_REENTRANT -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
+CPPFLAGS_Q=-DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
 
 PERLASM_SCHEME= macosx
 
@@ -2063,7 +2091,7 @@ build_programs: build_generated ## Build the openssl executables and scripts
 	"$(MAKE)" depend && "$(MAKE)" _build_programs
 _build_programs: build_programs_nodep
 
-all: build_sw  ## Build software and documentation
+all: build_sw build_docs ## Build software and documentation
 debuginfo: $(SHLIBS)
 	@set -e; for i in $(SHLIBS); do \
 		$(OBJCOPY) --only-keep-debug $$i $$i.debug; \
@@ -2170,9 +2198,9 @@ depend: Makefile
 # Install helper targets #############################################
 ##@ Installation
 
-install: install_sw install_ssldirs   ## Install software and documentation, create OpenSSL directories
+install: install_sw install_ssldirs install_docs  ## Install software and documentation, create OpenSSL directories
 
-uninstall:  uninstall_sw  ## Uninstall software and documentation
+uninstall: uninstall_docs uninstall_sw  ## Uninstall software and documentation
 
 install_sw: install_dev install_engines install_modules install_runtime ## Install just the software and libraries
 
@@ -2732,30 +2760,45 @@ errors:
           done )
 
 
-SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
-     crypto/aes/aes_ecb.c crypto/aes/aes_misc.c crypto/aes/aes_ofb.c \
-     crypto/aes/aes_wrap.c crypto/asn1/a_bitstr.c crypto/asn1/a_d2i_fp.c \
-     crypto/asn1/a_digest.c crypto/asn1/a_dup.c crypto/asn1/a_gentm.c \
-     crypto/asn1/a_i2d_fp.c crypto/asn1/a_int.c crypto/asn1/a_mbstr.c \
-     crypto/asn1/a_object.c crypto/asn1/a_octet.c crypto/asn1/a_print.c \
-     crypto/asn1/a_sign.c crypto/asn1/a_strex.c crypto/asn1/a_strnid.c \
-     crypto/asn1/a_time.c crypto/asn1/a_type.c crypto/asn1/a_utctm.c \
-     crypto/asn1/a_utf8.c crypto/asn1/a_verify.c crypto/asn1/ameth_lib.c \
-     crypto/asn1/asn1_err.c crypto/asn1/asn1_gen.c \
-     crypto/asn1/asn1_item_list.c crypto/asn1/asn1_lib.c \
-     crypto/asn1/asn1_parse.c crypto/asn1/asn_mime.c crypto/asn1/asn_moid.c \
-     crypto/asn1/asn_mstbl.c crypto/asn1/asn_pack.c crypto/asn1/bio_asn1.c \
-     crypto/asn1/bio_ndef.c crypto/asn1/d2i_param.c crypto/asn1/d2i_pr.c \
-     crypto/asn1/d2i_pu.c crypto/asn1/evp_asn1.c crypto/asn1/f_int.c \
-     crypto/asn1/f_string.c crypto/asn1/i2d_evp.c crypto/asn1/nsseq.c \
-     crypto/asn1/p5_pbe.c crypto/asn1/p5_pbev2.c crypto/asn1/p5_scrypt.c \
-     crypto/asn1/p8_pkey.c crypto/asn1/t_bitst.c crypto/asn1/t_pkey.c \
-     crypto/asn1/t_spki.c crypto/asn1/tasn_dec.c crypto/asn1/tasn_enc.c \
-     crypto/asn1/tasn_fre.c crypto/asn1/tasn_new.c crypto/asn1/tasn_prn.c \
-     crypto/asn1/tasn_scn.c crypto/asn1/tasn_typ.c crypto/asn1/tasn_utl.c \
-     crypto/asn1/x_algor.c crypto/asn1/x_bignum.c crypto/asn1/x_info.c \
-     crypto/asn1/x_int64.c crypto/asn1/x_pkey.c crypto/asn1/x_sig.c \
-     crypto/asn1/x_spki.c crypto/asn1/x_val.c crypto/async/arch/async_null.c \
+SRCS=apps/lib/app_libctx.c apps/lib/app_params.c apps/lib/app_provider.c \
+     apps/lib/app_rand.c apps/lib/app_x509.c apps/lib/apps.c \
+     apps/lib/apps_opt_printf.c apps/lib/apps_ui.c apps/lib/columns.c \
+     apps/lib/engine.c apps/lib/engine_loader.c apps/lib/fmt.c \
+     apps/lib/http_server.c apps/lib/log.c apps/lib/names.c apps/lib/opt.c \
+     apps/lib/s_cb.c apps/lib/s_socket.c apps/asn1parse.c apps/ca.c \
+     apps/ciphers.c apps/crl.c apps/crl2pkcs7.c apps/dgst.c apps/enc.c \
+     apps/errstr.c apps/fipsinstall.c apps/genpkey.c apps/genrsa.c \
+     apps/info.c apps/kdf.c apps/list.c apps/mac.c apps/nseq.c \
+     apps/openssl.c apps/passwd.c apps/pkcs12.c apps/pkcs7.c apps/pkcs8.c \
+     apps/pkey.c apps/pkeyparam.c apps/pkeyutl.c apps/prime.c apps/progs.c \
+     apps/rand.c apps/rehash.c apps/req.c apps/rsa.c apps/rsautl.c \
+     apps/s_client.c apps/s_server.c apps/s_time.c apps/sess_id.c \
+     apps/smime.c apps/speed.c apps/spkac.c apps/storeutl.c apps/verify.c \
+     apps/version.c apps/x509.c crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c \
+     crypto/aes/aes_core.c crypto/aes/aes_ecb.c crypto/aes/aes_ige.c \
+     crypto/aes/aes_misc.c crypto/aes/aes_ofb.c crypto/aes/aes_wrap.c \
+     crypto/asn1/a_bitstr.c crypto/asn1/a_d2i_fp.c crypto/asn1/a_digest.c \
+     crypto/asn1/a_dup.c crypto/asn1/a_gentm.c crypto/asn1/a_i2d_fp.c \
+     crypto/asn1/a_int.c crypto/asn1/a_mbstr.c crypto/asn1/a_object.c \
+     crypto/asn1/a_octet.c crypto/asn1/a_print.c crypto/asn1/a_sign.c \
+     crypto/asn1/a_strex.c crypto/asn1/a_strnid.c crypto/asn1/a_time.c \
+     crypto/asn1/a_type.c crypto/asn1/a_utctm.c crypto/asn1/a_utf8.c \
+     crypto/asn1/a_verify.c crypto/asn1/ameth_lib.c crypto/asn1/asn1_err.c \
+     crypto/asn1/asn1_gen.c crypto/asn1/asn1_item_list.c \
+     crypto/asn1/asn1_lib.c crypto/asn1/asn1_parse.c crypto/asn1/asn_mime.c \
+     crypto/asn1/asn_moid.c crypto/asn1/asn_mstbl.c crypto/asn1/asn_pack.c \
+     crypto/asn1/bio_asn1.c crypto/asn1/bio_ndef.c crypto/asn1/d2i_param.c \
+     crypto/asn1/d2i_pr.c crypto/asn1/d2i_pu.c crypto/asn1/evp_asn1.c \
+     crypto/asn1/f_int.c crypto/asn1/f_string.c crypto/asn1/i2d_evp.c \
+     crypto/asn1/nsseq.c crypto/asn1/p5_pbe.c crypto/asn1/p5_pbev2.c \
+     crypto/asn1/p5_scrypt.c crypto/asn1/p8_pkey.c crypto/asn1/t_bitst.c \
+     crypto/asn1/t_pkey.c crypto/asn1/t_spki.c crypto/asn1/tasn_dec.c \
+     crypto/asn1/tasn_enc.c crypto/asn1/tasn_fre.c crypto/asn1/tasn_new.c \
+     crypto/asn1/tasn_prn.c crypto/asn1/tasn_scn.c crypto/asn1/tasn_typ.c \
+     crypto/asn1/tasn_utl.c crypto/asn1/x_algor.c crypto/asn1/x_bignum.c \
+     crypto/asn1/x_info.c crypto/asn1/x_int64.c crypto/asn1/x_long.c \
+     crypto/asn1/x_pkey.c crypto/asn1/x_sig.c crypto/asn1/x_spki.c \
+     crypto/asn1/x_val.c crypto/async/arch/async_null.c \
      crypto/async/arch/async_posix.c crypto/async/arch/async_win.c \
      crypto/async/async.c crypto/async/async_err.c crypto/async/async_wait.c \
      crypto/bio/bf_buff.c crypto/bio/bf_lbuf.c crypto/bio/bf_nbio.c \
@@ -2769,26 +2812,27 @@ SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
      crypto/bio/bss_log.c crypto/bio/bss_mem.c crypto/bio/bss_null.c \
      crypto/bio/bss_sock.c crypto/bio/ossl_core_bio.c crypto/bn/bn_add.c \
      crypto/bn/bn_asm.c crypto/bn/bn_blind.c crypto/bn/bn_const.c \
-     crypto/bn/bn_conv.c crypto/bn/bn_ctx.c crypto/bn/bn_dh.c \
-     crypto/bn/bn_div.c crypto/bn/bn_err.c crypto/bn/bn_exp.c \
-     crypto/bn/bn_exp2.c crypto/bn/bn_gcd.c crypto/bn/bn_gf2m.c \
-     crypto/bn/bn_intern.c crypto/bn/bn_kron.c crypto/bn/bn_lib.c \
-     crypto/bn/bn_mod.c crypto/bn/bn_mont.c crypto/bn/bn_mpi.c \
-     crypto/bn/bn_mul.c crypto/bn/bn_nist.c crypto/bn/bn_prime.c \
-     crypto/bn/bn_print.c crypto/bn/bn_rand.c crypto/bn/bn_recp.c \
-     crypto/bn/bn_rsa_fips186_4.c crypto/bn/bn_shift.c crypto/bn/bn_sqr.c \
-     crypto/bn/bn_sqrt.c crypto/bn/bn_srp.c crypto/bn/bn_word.c \
-     crypto/buffer/buf_err.c crypto/buffer/buffer.c crypto/conf/conf_api.c \
-     crypto/conf/conf_def.c crypto/conf/conf_err.c crypto/conf/conf_lib.c \
-     crypto/conf/conf_mall.c crypto/conf/conf_mod.c crypto/conf/conf_sap.c \
-     crypto/conf/conf_ssl.c crypto/dso/dso_dl.c crypto/dso/dso_dlfcn.c \
-     crypto/dso/dso_err.c crypto/dso/dso_lib.c crypto/dso/dso_openssl.c \
-     crypto/dso/dso_vms.c crypto/dso/dso_win32.c \
-     crypto/encode_decode/decoder_err.c crypto/encode_decode/decoder_lib.c \
-     crypto/encode_decode/decoder_meth.c crypto/encode_decode/decoder_pkey.c \
-     crypto/encode_decode/encoder_err.c crypto/encode_decode/encoder_lib.c \
-     crypto/encode_decode/encoder_meth.c crypto/encode_decode/encoder_pkey.c \
-     crypto/err/err.c crypto/err/err_all.c crypto/err/err_all_legacy.c \
+     crypto/bn/bn_conv.c crypto/bn/bn_ctx.c crypto/bn/bn_depr.c \
+     crypto/bn/bn_dh.c crypto/bn/bn_div.c crypto/bn/bn_err.c \
+     crypto/bn/bn_exp.c crypto/bn/bn_exp2.c crypto/bn/bn_gcd.c \
+     crypto/bn/bn_gf2m.c crypto/bn/bn_intern.c crypto/bn/bn_kron.c \
+     crypto/bn/bn_lib.c crypto/bn/bn_mod.c crypto/bn/bn_mont.c \
+     crypto/bn/bn_mpi.c crypto/bn/bn_mul.c crypto/bn/bn_nist.c \
+     crypto/bn/bn_prime.c crypto/bn/bn_print.c crypto/bn/bn_rand.c \
+     crypto/bn/bn_recp.c crypto/bn/bn_rsa_fips186_4.c crypto/bn/bn_shift.c \
+     crypto/bn/bn_sqr.c crypto/bn/bn_sqrt.c crypto/bn/bn_srp.c \
+     crypto/bn/bn_word.c crypto/bn/bn_x931p.c crypto/buffer/buf_err.c \
+     crypto/buffer/buffer.c crypto/conf/conf_api.c crypto/conf/conf_def.c \
+     crypto/conf/conf_err.c crypto/conf/conf_lib.c crypto/conf/conf_mall.c \
+     crypto/conf/conf_mod.c crypto/conf/conf_sap.c crypto/conf/conf_ssl.c \
+     crypto/dso/dso_dl.c crypto/dso/dso_dlfcn.c crypto/dso/dso_err.c \
+     crypto/dso/dso_lib.c crypto/dso/dso_openssl.c crypto/dso/dso_vms.c \
+     crypto/dso/dso_win32.c crypto/encode_decode/decoder_err.c \
+     crypto/encode_decode/decoder_lib.c crypto/encode_decode/decoder_meth.c \
+     crypto/encode_decode/decoder_pkey.c crypto/encode_decode/encoder_err.c \
+     crypto/encode_decode/encoder_lib.c crypto/encode_decode/encoder_meth.c \
+     crypto/encode_decode/encoder_pkey.c crypto/err/err.c \
+     crypto/err/err_all.c crypto/err/err_all_legacy.c \
      crypto/err/err_blocks.c crypto/err/err_mark.c crypto/err/err_prn.c \
      crypto/err/err_save.c crypto/ess/ess_asn1.c crypto/ess/ess_err.c \
      crypto/ess/ess_lib.c crypto/evp/asymcipher.c crypto/evp/bio_b64.c \
@@ -2800,23 +2844,24 @@ SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
      crypto/evp/e_aes_cbc_hmac_sha256.c crypto/evp/e_aria.c \
      crypto/evp/e_bf.c crypto/evp/e_cast.c crypto/evp/e_chacha20_poly1305.c \
      crypto/evp/e_des.c crypto/evp/e_des3.c crypto/evp/e_idea.c \
-     crypto/evp/e_null.c crypto/evp/e_rc2.c crypto/evp/e_rc4.c \
-     crypto/evp/e_rc4_hmac_md5.c crypto/evp/e_rc5.c crypto/evp/e_sm4.c \
-     crypto/evp/e_xcbc_d.c crypto/evp/ec_ctrl.c crypto/evp/ec_support.c \
-     crypto/evp/encode.c crypto/evp/evp_cnf.c crypto/evp/evp_enc.c \
-     crypto/evp/evp_err.c crypto/evp/evp_fetch.c crypto/evp/evp_key.c \
-     crypto/evp/evp_lib.c crypto/evp/evp_pbe.c crypto/evp/evp_pkey.c \
-     crypto/evp/evp_rand.c crypto/evp/evp_utils.c crypto/evp/exchange.c \
-     crypto/evp/kdf_lib.c crypto/evp/kdf_meth.c crypto/evp/kem.c \
-     crypto/evp/keymgmt_lib.c crypto/evp/keymgmt_meth.c \
+     crypto/evp/e_null.c crypto/evp/e_old.c crypto/evp/e_rc2.c \
+     crypto/evp/e_rc4.c crypto/evp/e_rc4_hmac_md5.c crypto/evp/e_rc5.c \
+     crypto/evp/e_sm4.c crypto/evp/e_xcbc_d.c crypto/evp/ec_ctrl.c \
+     crypto/evp/ec_support.c crypto/evp/encode.c crypto/evp/evp_cnf.c \
+     crypto/evp/evp_enc.c crypto/evp/evp_err.c crypto/evp/evp_fetch.c \
+     crypto/evp/evp_key.c crypto/evp/evp_lib.c crypto/evp/evp_pbe.c \
+     crypto/evp/evp_pkey.c crypto/evp/evp_rand.c crypto/evp/evp_utils.c \
+     crypto/evp/exchange.c crypto/evp/kdf_lib.c crypto/evp/kdf_meth.c \
+     crypto/evp/kem.c crypto/evp/keymgmt_lib.c crypto/evp/keymgmt_meth.c \
      crypto/evp/legacy_md5.c crypto/evp/legacy_md5_sha1.c \
      crypto/evp/legacy_sha.c crypto/evp/m_null.c crypto/evp/m_sigver.c \
      crypto/evp/mac_lib.c crypto/evp/mac_meth.c crypto/evp/names.c \
-     crypto/evp/p5_crpt.c crypto/evp/p5_crpt2.c crypto/evp/p_legacy.c \
-     crypto/evp/p_lib.c crypto/evp/p_open.c crypto/evp/p_seal.c \
-     crypto/evp/p_sign.c crypto/evp/p_verify.c crypto/evp/pbe_scrypt.c \
-     crypto/evp/pmeth_check.c crypto/evp/pmeth_gn.c crypto/evp/pmeth_lib.c \
-     crypto/evp/signature.c crypto/ffc/ffc_backend.c crypto/ffc/ffc_dh.c \
+     crypto/evp/p5_crpt.c crypto/evp/p5_crpt2.c crypto/evp/p_dec.c \
+     crypto/evp/p_enc.c crypto/evp/p_legacy.c crypto/evp/p_lib.c \
+     crypto/evp/p_open.c crypto/evp/p_seal.c crypto/evp/p_sign.c \
+     crypto/evp/p_verify.c crypto/evp/pbe_scrypt.c crypto/evp/pmeth_check.c \
+     crypto/evp/pmeth_gn.c crypto/evp/pmeth_lib.c crypto/evp/signature.c \
+     crypto/ffc/ffc_backend.c crypto/ffc/ffc_dh.c \
      crypto/ffc/ffc_key_generate.c crypto/ffc/ffc_key_validate.c \
      crypto/ffc/ffc_params.c crypto/ffc/ffc_params_generate.c \
      crypto/ffc/ffc_params_validate.c crypto/hashtable/hashtable.c \
@@ -2865,44 +2910,45 @@ SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
      crypto/property/property_parse.c crypto/property/property_query.c \
      crypto/property/property_string.c crypto/rand/prov_seed.c \
      crypto/rand/rand_deprecated.c crypto/rand/rand_err.c \
-     crypto/rand/rand_lib.c crypto/rand/rand_pool.c \
+     crypto/rand/rand_lib.c crypto/rand/rand_meth.c crypto/rand/rand_pool.c \
      crypto/rand/rand_uniform.c crypto/rand/randfile.c \
      crypto/rsa/rsa_ameth.c crypto/rsa/rsa_asn1.c crypto/rsa/rsa_backend.c \
-     crypto/rsa/rsa_chk.c crypto/rsa/rsa_crpt.c crypto/rsa/rsa_err.c \
-     crypto/rsa/rsa_gen.c crypto/rsa/rsa_lib.c crypto/rsa/rsa_meth.c \
-     crypto/rsa/rsa_mp.c crypto/rsa/rsa_mp_names.c crypto/rsa/rsa_none.c \
-     crypto/rsa/rsa_oaep.c crypto/rsa/rsa_ossl.c crypto/rsa/rsa_pk1.c \
-     crypto/rsa/rsa_pmeth.c crypto/rsa/rsa_prn.c crypto/rsa/rsa_pss.c \
-     crypto/rsa/rsa_saos.c crypto/rsa/rsa_schemes.c crypto/rsa/rsa_sign.c \
-     crypto/rsa/rsa_sp800_56b_check.c crypto/rsa/rsa_sp800_56b_gen.c \
-     crypto/rsa/rsa_x931.c crypto/sha/keccak1600.c crypto/sha/sha1_one.c \
+     crypto/rsa/rsa_chk.c crypto/rsa/rsa_crpt.c crypto/rsa/rsa_depr.c \
+     crypto/rsa/rsa_err.c crypto/rsa/rsa_gen.c crypto/rsa/rsa_lib.c \
+     crypto/rsa/rsa_meth.c crypto/rsa/rsa_mp.c crypto/rsa/rsa_mp_names.c \
+     crypto/rsa/rsa_none.c crypto/rsa/rsa_oaep.c crypto/rsa/rsa_ossl.c \
+     crypto/rsa/rsa_pk1.c crypto/rsa/rsa_pmeth.c crypto/rsa/rsa_prn.c \
+     crypto/rsa/rsa_pss.c crypto/rsa/rsa_saos.c crypto/rsa/rsa_schemes.c \
+     crypto/rsa/rsa_sign.c crypto/rsa/rsa_sp800_56b_check.c \
+     crypto/rsa/rsa_sp800_56b_gen.c crypto/rsa/rsa_x931.c \
+     crypto/rsa/rsa_x931g.c crypto/sha/keccak1600.c crypto/sha/sha1_one.c \
      crypto/sha/sha1dgst.c crypto/sha/sha256.c crypto/sha/sha3.c \
      crypto/sha/sha512.c crypto/stack/stack.c crypto/store/store_err.c \
-     crypto/store/store_lib.c crypto/store/store_meth.c \
+     crypto/store/store_init.c crypto/store/store_lib.c \
+     crypto/store/store_meth.c crypto/store/store_register.c \
      crypto/store/store_result.c crypto/store/store_strings.c \
-     crypto/thread/arch/thread_none.c crypto/thread/arch/thread_posix.c \
      crypto/thread/arch/thread_win.c crypto/thread/api.c \
-     crypto/thread/arch.c crypto/thread/internal.c crypto/txt_db/txt_db.c \
-     crypto/ui/ui_err.c crypto/ui/ui_lib.c crypto/ui/ui_null.c \
-     crypto/ui/ui_openssl.c crypto/ui/ui_util.c crypto/x509/by_dir.c \
-     crypto/x509/by_file.c crypto/x509/by_store.c crypto/x509/pcy_cache.c \
-     crypto/x509/pcy_data.c crypto/x509/pcy_lib.c crypto/x509/pcy_map.c \
-     crypto/x509/pcy_node.c crypto/x509/pcy_tree.c crypto/x509/t_acert.c \
-     crypto/x509/t_crl.c crypto/x509/t_req.c crypto/x509/t_x509.c \
-     crypto/x509/v3_ac_tgt.c crypto/x509/v3_addr.c crypto/x509/v3_admis.c \
-     crypto/x509/v3_akeya.c crypto/x509/v3_akid.c crypto/x509/v3_asid.c \
-     crypto/x509/v3_audit_id.c crypto/x509/v3_authattid.c \
-     crypto/x509/v3_battcons.c crypto/x509/v3_bcons.c crypto/x509/v3_bitst.c \
-     crypto/x509/v3_conf.c crypto/x509/v3_cpols.c crypto/x509/v3_crld.c \
-     crypto/x509/v3_enum.c crypto/x509/v3_extku.c crypto/x509/v3_genn.c \
-     crypto/x509/v3_group_ac.c crypto/x509/v3_ia5.c crypto/x509/v3_ind_iss.c \
-     crypto/x509/v3_info.c crypto/x509/v3_int.c crypto/x509/v3_iobo.c \
-     crypto/x509/v3_ist.c crypto/x509/v3_lib.c crypto/x509/v3_ncons.c \
-     crypto/x509/v3_no_ass.c crypto/x509/v3_no_rev_avail.c \
-     crypto/x509/v3_pci.c crypto/x509/v3_pcia.c crypto/x509/v3_pcons.c \
-     crypto/x509/v3_pku.c crypto/x509/v3_pmaps.c crypto/x509/v3_prn.c \
-     crypto/x509/v3_purp.c crypto/x509/v3_rolespec.c crypto/x509/v3_san.c \
-     crypto/x509/v3_sda.c crypto/x509/v3_single_use.c crypto/x509/v3_skid.c \
+     crypto/txt_db/txt_db.c crypto/ui/ui_err.c crypto/ui/ui_lib.c \
+     crypto/ui/ui_null.c crypto/ui/ui_openssl.c crypto/ui/ui_util.c \
+     crypto/x509/by_dir.c crypto/x509/by_file.c crypto/x509/by_store.c \
+     crypto/x509/pcy_cache.c crypto/x509/pcy_data.c crypto/x509/pcy_lib.c \
+     crypto/x509/pcy_map.c crypto/x509/pcy_node.c crypto/x509/pcy_tree.c \
+     crypto/x509/t_acert.c crypto/x509/t_crl.c crypto/x509/t_req.c \
+     crypto/x509/t_x509.c crypto/x509/v3_ac_tgt.c crypto/x509/v3_addr.c \
+     crypto/x509/v3_admis.c crypto/x509/v3_akeya.c crypto/x509/v3_akid.c \
+     crypto/x509/v3_asid.c crypto/x509/v3_audit_id.c \
+     crypto/x509/v3_authattid.c crypto/x509/v3_battcons.c \
+     crypto/x509/v3_bcons.c crypto/x509/v3_bitst.c crypto/x509/v3_conf.c \
+     crypto/x509/v3_cpols.c crypto/x509/v3_crld.c crypto/x509/v3_enum.c \
+     crypto/x509/v3_extku.c crypto/x509/v3_genn.c crypto/x509/v3_group_ac.c \
+     crypto/x509/v3_ia5.c crypto/x509/v3_ind_iss.c crypto/x509/v3_info.c \
+     crypto/x509/v3_int.c crypto/x509/v3_iobo.c crypto/x509/v3_ist.c \
+     crypto/x509/v3_lib.c crypto/x509/v3_ncons.c crypto/x509/v3_no_ass.c \
+     crypto/x509/v3_no_rev_avail.c crypto/x509/v3_pci.c \
+     crypto/x509/v3_pcia.c crypto/x509/v3_pcons.c crypto/x509/v3_pku.c \
+     crypto/x509/v3_pmaps.c crypto/x509/v3_prn.c crypto/x509/v3_purp.c \
+     crypto/x509/v3_rolespec.c crypto/x509/v3_san.c crypto/x509/v3_sda.c \
+     crypto/x509/v3_single_use.c crypto/x509/v3_skid.c \
      crypto/x509/v3_soa_id.c crypto/x509/v3_sxnet.c crypto/x509/v3_tlsf.c \
      crypto/x509/v3_usernotice.c crypto/x509/v3_utf8.c crypto/x509/v3_utl.c \
      crypto/x509/v3err.c crypto/x509/x509_acert.c crypto/x509/x509_att.c \
@@ -2913,10 +2959,11 @@ SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
      crypto/x509/x509_txt.c crypto/x509/x509_v3.c crypto/x509/x509_vfy.c \
      crypto/x509/x509_vpm.c crypto/x509/x509aset.c crypto/x509/x509cset.c \
      crypto/x509/x509name.c crypto/x509/x509rset.c crypto/x509/x509spki.c \
-     crypto/x509/x_all.c crypto/x509/x_attrib.c crypto/x509/x_crl.c \
-     crypto/x509/x_exten.c crypto/x509/x_ietfatt.c crypto/x509/x_name.c \
-     crypto/x509/x_pubkey.c crypto/x509/x_req.c crypto/x509/x_x509.c \
-     crypto/x509/x_x509a.c providers/common/der/der_digests_gen.c \
+     crypto/x509/x509type.c crypto/x509/x_all.c crypto/x509/x_attrib.c \
+     crypto/x509/x_crl.c crypto/x509/x_exten.c crypto/x509/x_ietfatt.c \
+     crypto/x509/x_name.c crypto/x509/x_pubkey.c crypto/x509/x_req.c \
+     crypto/x509/x_x509.c crypto/x509/x_x509a.c \
+     providers/common/der/der_digests_gen.c \
      providers/common/der/der_rsa_gen.c providers/common/der/der_rsa_key.c \
      providers/common/der/der_wrap_gen.c providers/common/der/der_rsa_sig.c \
      providers/common/provider_ctx.c providers/common/provider_err.c \
@@ -3007,9 +3054,9 @@ SRCS=crypto/aes/aes_cbc.c crypto/aes/aes_cfb.c crypto/aes/aes_core.c \
      ssl/s3_enc.c ssl/s3_lib.c ssl/s3_msg.c ssl/ssl_asn1.c ssl/ssl_cert.c \
      ssl/ssl_cert_comp.c ssl/ssl_ciph.c ssl/ssl_conf.c ssl/ssl_err.c \
      ssl/ssl_err_legacy.c ssl/ssl_init.c ssl/ssl_lib.c ssl/ssl_mcnf.c \
-     ssl/ssl_rsa.c ssl/ssl_sess.c ssl/ssl_stat.c ssl/ssl_txt.c \
-     ssl/ssl_utst.c ssl/t1_enc.c ssl/t1_lib.c ssl/t1_trce.c ssl/tls13_enc.c \
-     ssl/tls_depr.c ssl/tls_srp.c ssl/record/rec_layer_d1.c \
+     ssl/ssl_rsa.c ssl/ssl_rsa_legacy.c ssl/ssl_sess.c ssl/ssl_stat.c \
+     ssl/ssl_txt.c ssl/ssl_utst.c ssl/t1_enc.c ssl/t1_lib.c ssl/t1_trce.c \
+     ssl/tls13_enc.c ssl/tls_depr.c ssl/tls_srp.c ssl/record/rec_layer_d1.c \
      ssl/record/rec_layer_s3.c ssl/record/methods/tls_pad.c \
      ssl/record/methods/ssl3_cbc.c ssl/record/methods/dtls_meth.c \
      ssl/record/methods/ssl3_meth.c ssl/record/methods/tls13_meth.c \
@@ -3325,10 +3372,172 @@ libcrypto.pc: exporters/pkg-config/libcrypto.pc.in builddata.pm configdata.pm
 	$(PERL) "-I." "-Mconfigdata" "-Mbuilddata" "util/dofile.pl" "-oMakefile" exporters/pkg-config/libcrypto.pc.in > $@
 libssl.pc: exporters/pkg-config/libssl.pc.in builddata.pm configdata.pm
 	$(PERL) "-I." "-Mconfigdata" "-Mbuilddata" "util/dofile.pl" "-oMakefile" exporters/pkg-config/libssl.pc.in > $@
+apps/libapps.a: apps/lib/libapps-lib-app_libctx.o \
+                apps/lib/libapps-lib-app_params.o \
+                apps/lib/libapps-lib-app_provider.o \
+                apps/lib/libapps-lib-app_rand.o \
+                apps/lib/libapps-lib-app_x509.o apps/lib/libapps-lib-apps.o \
+                apps/lib/libapps-lib-apps_opt_printf.o \
+                apps/lib/libapps-lib-apps_ui.o \
+                apps/lib/libapps-lib-columns.o apps/lib/libapps-lib-engine.o \
+                apps/lib/libapps-lib-engine_loader.o \
+                apps/lib/libapps-lib-fmt.o \
+                apps/lib/libapps-lib-http_server.o \
+                apps/lib/libapps-lib-log.o apps/lib/libapps-lib-names.o \
+                apps/lib/libapps-lib-opt.o apps/lib/libapps-lib-s_cb.o \
+                apps/lib/libapps-lib-s_socket.o
+	$(RM) apps/libapps.a
+	$(AR) $(ARFLAGS) apps/libapps.a apps/lib/libapps-lib-app_libctx.o apps/lib/libapps-lib-app_params.o apps/lib/libapps-lib-app_provider.o apps/lib/libapps-lib-app_rand.o apps/lib/libapps-lib-app_x509.o apps/lib/libapps-lib-apps.o apps/lib/libapps-lib-apps_opt_printf.o apps/lib/libapps-lib-apps_ui.o apps/lib/libapps-lib-columns.o apps/lib/libapps-lib-engine.o apps/lib/libapps-lib-engine_loader.o apps/lib/libapps-lib-fmt.o apps/lib/libapps-lib-http_server.o apps/lib/libapps-lib-log.o apps/lib/libapps-lib-names.o apps/lib/libapps-lib-opt.o apps/lib/libapps-lib-s_cb.o apps/lib/libapps-lib-s_socket.o
+	$(RANLIB) $@ || echo Never mind.
+apps/lib/libapps-lib-app_libctx.o: apps/lib/app_libctx.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-app_libctx.d.tmp -c -o $@ apps/lib/app_libctx.c
+	@touch apps/lib/libapps-lib-app_libctx.d.tmp
+	@if cmp apps/lib/libapps-lib-app_libctx.d.tmp apps/lib/libapps-lib-app_libctx.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-app_libctx.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-app_libctx.d.tmp apps/lib/libapps-lib-app_libctx.d; \
+	fi
+apps/lib/libapps-lib-app_params.o: apps/lib/app_params.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-app_params.d.tmp -c -o $@ apps/lib/app_params.c
+	@touch apps/lib/libapps-lib-app_params.d.tmp
+	@if cmp apps/lib/libapps-lib-app_params.d.tmp apps/lib/libapps-lib-app_params.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-app_params.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-app_params.d.tmp apps/lib/libapps-lib-app_params.d; \
+	fi
+apps/lib/libapps-lib-app_provider.o: apps/lib/app_provider.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-app_provider.d.tmp -c -o $@ apps/lib/app_provider.c
+	@touch apps/lib/libapps-lib-app_provider.d.tmp
+	@if cmp apps/lib/libapps-lib-app_provider.d.tmp apps/lib/libapps-lib-app_provider.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-app_provider.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-app_provider.d.tmp apps/lib/libapps-lib-app_provider.d; \
+	fi
+apps/lib/libapps-lib-app_rand.o: apps/lib/app_rand.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-app_rand.d.tmp -c -o $@ apps/lib/app_rand.c
+	@touch apps/lib/libapps-lib-app_rand.d.tmp
+	@if cmp apps/lib/libapps-lib-app_rand.d.tmp apps/lib/libapps-lib-app_rand.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-app_rand.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-app_rand.d.tmp apps/lib/libapps-lib-app_rand.d; \
+	fi
+apps/lib/libapps-lib-app_x509.o: apps/lib/app_x509.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-app_x509.d.tmp -c -o $@ apps/lib/app_x509.c
+	@touch apps/lib/libapps-lib-app_x509.d.tmp
+	@if cmp apps/lib/libapps-lib-app_x509.d.tmp apps/lib/libapps-lib-app_x509.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-app_x509.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-app_x509.d.tmp apps/lib/libapps-lib-app_x509.d; \
+	fi
+apps/lib/libapps-lib-apps.o: apps/lib/apps.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-apps.d.tmp -c -o $@ apps/lib/apps.c
+	@touch apps/lib/libapps-lib-apps.d.tmp
+	@if cmp apps/lib/libapps-lib-apps.d.tmp apps/lib/libapps-lib-apps.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-apps.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-apps.d.tmp apps/lib/libapps-lib-apps.d; \
+	fi
+apps/lib/libapps-lib-apps_opt_printf.o: apps/lib/apps_opt_printf.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-apps_opt_printf.d.tmp -c -o $@ apps/lib/apps_opt_printf.c
+	@touch apps/lib/libapps-lib-apps_opt_printf.d.tmp
+	@if cmp apps/lib/libapps-lib-apps_opt_printf.d.tmp apps/lib/libapps-lib-apps_opt_printf.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-apps_opt_printf.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-apps_opt_printf.d.tmp apps/lib/libapps-lib-apps_opt_printf.d; \
+	fi
+apps/lib/libapps-lib-apps_ui.o: apps/lib/apps_ui.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-apps_ui.d.tmp -c -o $@ apps/lib/apps_ui.c
+	@touch apps/lib/libapps-lib-apps_ui.d.tmp
+	@if cmp apps/lib/libapps-lib-apps_ui.d.tmp apps/lib/libapps-lib-apps_ui.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-apps_ui.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-apps_ui.d.tmp apps/lib/libapps-lib-apps_ui.d; \
+	fi
+apps/lib/libapps-lib-columns.o: apps/lib/columns.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-columns.d.tmp -c -o $@ apps/lib/columns.c
+	@touch apps/lib/libapps-lib-columns.d.tmp
+	@if cmp apps/lib/libapps-lib-columns.d.tmp apps/lib/libapps-lib-columns.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-columns.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-columns.d.tmp apps/lib/libapps-lib-columns.d; \
+	fi
+apps/lib/libapps-lib-engine.o: apps/lib/engine.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-engine.d.tmp -c -o $@ apps/lib/engine.c
+	@touch apps/lib/libapps-lib-engine.d.tmp
+	@if cmp apps/lib/libapps-lib-engine.d.tmp apps/lib/libapps-lib-engine.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-engine.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-engine.d.tmp apps/lib/libapps-lib-engine.d; \
+	fi
+apps/lib/libapps-lib-engine_loader.o: apps/lib/engine_loader.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-engine_loader.d.tmp -c -o $@ apps/lib/engine_loader.c
+	@touch apps/lib/libapps-lib-engine_loader.d.tmp
+	@if cmp apps/lib/libapps-lib-engine_loader.d.tmp apps/lib/libapps-lib-engine_loader.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-engine_loader.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-engine_loader.d.tmp apps/lib/libapps-lib-engine_loader.d; \
+	fi
+apps/lib/libapps-lib-fmt.o: apps/lib/fmt.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-fmt.d.tmp -c -o $@ apps/lib/fmt.c
+	@touch apps/lib/libapps-lib-fmt.d.tmp
+	@if cmp apps/lib/libapps-lib-fmt.d.tmp apps/lib/libapps-lib-fmt.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-fmt.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-fmt.d.tmp apps/lib/libapps-lib-fmt.d; \
+	fi
+apps/lib/libapps-lib-http_server.o: apps/lib/http_server.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-http_server.d.tmp -c -o $@ apps/lib/http_server.c
+	@touch apps/lib/libapps-lib-http_server.d.tmp
+	@if cmp apps/lib/libapps-lib-http_server.d.tmp apps/lib/libapps-lib-http_server.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-http_server.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-http_server.d.tmp apps/lib/libapps-lib-http_server.d; \
+	fi
+apps/lib/libapps-lib-log.o: apps/lib/log.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-log.d.tmp -c -o $@ apps/lib/log.c
+	@touch apps/lib/libapps-lib-log.d.tmp
+	@if cmp apps/lib/libapps-lib-log.d.tmp apps/lib/libapps-lib-log.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-log.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-log.d.tmp apps/lib/libapps-lib-log.d; \
+	fi
+apps/lib/libapps-lib-names.o: apps/lib/names.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-names.d.tmp -c -o $@ apps/lib/names.c
+	@touch apps/lib/libapps-lib-names.d.tmp
+	@if cmp apps/lib/libapps-lib-names.d.tmp apps/lib/libapps-lib-names.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-names.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-names.d.tmp apps/lib/libapps-lib-names.d; \
+	fi
+apps/lib/libapps-lib-opt.o: apps/lib/opt.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-opt.d.tmp -c -o $@ apps/lib/opt.c
+	@touch apps/lib/libapps-lib-opt.d.tmp
+	@if cmp apps/lib/libapps-lib-opt.d.tmp apps/lib/libapps-lib-opt.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-opt.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-opt.d.tmp apps/lib/libapps-lib-opt.d; \
+	fi
+apps/lib/libapps-lib-s_cb.o: apps/lib/s_cb.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-s_cb.d.tmp -c -o $@ apps/lib/s_cb.c
+	@touch apps/lib/libapps-lib-s_cb.d.tmp
+	@if cmp apps/lib/libapps-lib-s_cb.d.tmp apps/lib/libapps-lib-s_cb.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-s_cb.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-s_cb.d.tmp apps/lib/libapps-lib-s_cb.d; \
+	fi
+apps/lib/libapps-lib-s_socket.o: apps/lib/s_socket.c
+	$(CC)  -I. -Iinclude -Iapps/include  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF apps/lib/libapps-lib-s_socket.d.tmp -c -o $@ apps/lib/s_socket.c
+	@touch apps/lib/libapps-lib-s_socket.d.tmp
+	@if cmp apps/lib/libapps-lib-s_socket.d.tmp apps/lib/libapps-lib-s_socket.d > /dev/null 2> /dev/null; then \
+		rm -f apps/lib/libapps-lib-s_socket.d.tmp; \
+	else \
+		mv apps/lib/libapps-lib-s_socket.d.tmp apps/lib/libapps-lib-s_socket.d; \
+	fi
 libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/aes/libcrypto-lib-aes_cfb.o \
              crypto/aes/libcrypto-lib-aes_core.o \
              crypto/aes/libcrypto-lib-aes_ecb.o \
+             crypto/aes/libcrypto-lib-aes_ige.o \
              crypto/aes/libcrypto-lib-aes_misc.o \
              crypto/aes/libcrypto-lib-aes_ofb.o \
              crypto/aes/libcrypto-lib-aes_wrap.o \
@@ -3390,6 +3599,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/asn1/libcrypto-lib-x_bignum.o \
              crypto/asn1/libcrypto-lib-x_info.o \
              crypto/asn1/libcrypto-lib-x_int64.o \
+             crypto/asn1/libcrypto-lib-x_long.o \
              crypto/asn1/libcrypto-lib-x_pkey.o \
              crypto/asn1/libcrypto-lib-x_sig.o \
              crypto/asn1/libcrypto-lib-x_spki.o \
@@ -3434,6 +3644,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/bn/libcrypto-lib-bn_const.o \
              crypto/bn/libcrypto-lib-bn_conv.o \
              crypto/bn/libcrypto-lib-bn_ctx.o \
+             crypto/bn/libcrypto-lib-bn_depr.o \
              crypto/bn/libcrypto-lib-bn_dh.o \
              crypto/bn/libcrypto-lib-bn_div.o \
              crypto/bn/libcrypto-lib-bn_err.o \
@@ -3459,6 +3670,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/bn/libcrypto-lib-bn_sqrt.o \
              crypto/bn/libcrypto-lib-bn_srp.o \
              crypto/bn/libcrypto-lib-bn_word.o \
+             crypto/bn/libcrypto-lib-bn_x931p.o \
              crypto/buffer/libcrypto-lib-buf_err.o \
              crypto/buffer/libcrypto-lib-buffer.o \
              crypto/conf/libcrypto-lib-conf_api.o \
@@ -3518,6 +3730,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/evp/libcrypto-lib-e_des3.o \
              crypto/evp/libcrypto-lib-e_idea.o \
              crypto/evp/libcrypto-lib-e_null.o \
+             crypto/evp/libcrypto-lib-e_old.o \
              crypto/evp/libcrypto-lib-e_rc2.o \
              crypto/evp/libcrypto-lib-e_rc4.o \
              crypto/evp/libcrypto-lib-e_rc4_hmac_md5.o \
@@ -3553,6 +3766,8 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/evp/libcrypto-lib-names.o \
              crypto/evp/libcrypto-lib-p5_crpt.o \
              crypto/evp/libcrypto-lib-p5_crpt2.o \
+             crypto/evp/libcrypto-lib-p_dec.o \
+             crypto/evp/libcrypto-lib-p_enc.o \
              crypto/evp/libcrypto-lib-p_legacy.o \
              crypto/evp/libcrypto-lib-p_lib.o \
              crypto/evp/libcrypto-lib-p_open.o \
@@ -3687,6 +3902,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/rand/libcrypto-lib-rand_deprecated.o \
              crypto/rand/libcrypto-lib-rand_err.o \
              crypto/rand/libcrypto-lib-rand_lib.o \
+             crypto/rand/libcrypto-lib-rand_meth.o \
              crypto/rand/libcrypto-lib-rand_pool.o \
              crypto/rand/libcrypto-lib-rand_uniform.o \
              crypto/rand/libcrypto-lib-randfile.o \
@@ -3695,6 +3911,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/rsa/libcrypto-lib-rsa_backend.o \
              crypto/rsa/libcrypto-lib-rsa_chk.o \
              crypto/rsa/libcrypto-lib-rsa_crpt.o \
+             crypto/rsa/libcrypto-lib-rsa_depr.o \
              crypto/rsa/libcrypto-lib-rsa_err.o \
              crypto/rsa/libcrypto-lib-rsa_gen.o \
              crypto/rsa/libcrypto-lib-rsa_lib.o \
@@ -3714,6 +3931,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/rsa/libcrypto-lib-rsa_sp800_56b_check.o \
              crypto/rsa/libcrypto-lib-rsa_sp800_56b_gen.o \
              crypto/rsa/libcrypto-lib-rsa_x931.o \
+             crypto/rsa/libcrypto-lib-rsa_x931g.o \
              crypto/sha/libcrypto-lib-keccak1600.o \
              crypto/sha/libcrypto-lib-sha1_one.o \
              crypto/sha/libcrypto-lib-sha1dgst.o \
@@ -3722,16 +3940,14 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/sha/libcrypto-lib-sha512.o \
              crypto/stack/libcrypto-lib-stack.o \
              crypto/store/libcrypto-lib-store_err.o \
+             crypto/store/libcrypto-lib-store_init.o \
              crypto/store/libcrypto-lib-store_lib.o \
              crypto/store/libcrypto-lib-store_meth.o \
+             crypto/store/libcrypto-lib-store_register.o \
              crypto/store/libcrypto-lib-store_result.o \
              crypto/store/libcrypto-lib-store_strings.o \
-             crypto/thread/arch/libcrypto-lib-thread_none.o \
-             crypto/thread/arch/libcrypto-lib-thread_posix.o \
              crypto/thread/arch/libcrypto-lib-thread_win.o \
              crypto/thread/libcrypto-lib-api.o \
-             crypto/thread/libcrypto-lib-arch.o \
-             crypto/thread/libcrypto-lib-internal.o \
              crypto/txt_db/libcrypto-lib-txt_db.o \
              crypto/ui/libcrypto-lib-ui_err.o \
              crypto/ui/libcrypto-lib-ui_lib.o \
@@ -3821,6 +4037,7 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              crypto/x509/libcrypto-lib-x509name.o \
              crypto/x509/libcrypto-lib-x509rset.o \
              crypto/x509/libcrypto-lib-x509spki.o \
+             crypto/x509/libcrypto-lib-x509type.o \
              crypto/x509/libcrypto-lib-x_all.o \
              crypto/x509/libcrypto-lib-x_attrib.o \
              crypto/x509/libcrypto-lib-x_crl.o \
@@ -3930,8 +4147,8 @@ libcrypto.a: crypto/aes/libcrypto-lib-aes_cbc.o \
              providers/implementations/digests/libcommon-lib-digestcommon.o \
              ssl/record/methods/libcommon-lib-tls_pad.o
 	$(RM) libcrypto.a
-	$(AR) $(ARFLAGS) libcrypto.a crypto/aes/libcrypto-lib-aes_cbc.o crypto/aes/libcrypto-lib-aes_cfb.o crypto/aes/libcrypto-lib-aes_core.o crypto/aes/libcrypto-lib-aes_ecb.o crypto/aes/libcrypto-lib-aes_misc.o crypto/aes/libcrypto-lib-aes_ofb.o crypto/aes/libcrypto-lib-aes_wrap.o crypto/asn1/libcrypto-lib-a_bitstr.o crypto/asn1/libcrypto-lib-a_d2i_fp.o crypto/asn1/libcrypto-lib-a_digest.o crypto/asn1/libcrypto-lib-a_dup.o crypto/asn1/libcrypto-lib-a_gentm.o crypto/asn1/libcrypto-lib-a_i2d_fp.o crypto/asn1/libcrypto-lib-a_int.o crypto/asn1/libcrypto-lib-a_mbstr.o crypto/asn1/libcrypto-lib-a_object.o crypto/asn1/libcrypto-lib-a_octet.o crypto/asn1/libcrypto-lib-a_print.o crypto/asn1/libcrypto-lib-a_sign.o crypto/asn1/libcrypto-lib-a_strex.o crypto/asn1/libcrypto-lib-a_strnid.o crypto/asn1/libcrypto-lib-a_time.o crypto/asn1/libcrypto-lib-a_type.o crypto/asn1/libcrypto-lib-a_utctm.o crypto/asn1/libcrypto-lib-a_utf8.o crypto/asn1/libcrypto-lib-a_verify.o crypto/asn1/libcrypto-lib-ameth_lib.o crypto/asn1/libcrypto-lib-asn1_err.o crypto/asn1/libcrypto-lib-asn1_gen.o crypto/asn1/libcrypto-lib-asn1_item_list.o crypto/asn1/libcrypto-lib-asn1_lib.o crypto/asn1/libcrypto-lib-asn1_parse.o crypto/asn1/libcrypto-lib-asn_mime.o crypto/asn1/libcrypto-lib-asn_moid.o crypto/asn1/libcrypto-lib-asn_mstbl.o crypto/asn1/libcrypto-lib-asn_pack.o crypto/asn1/libcrypto-lib-bio_asn1.o crypto/asn1/libcrypto-lib-bio_ndef.o crypto/asn1/libcrypto-lib-d2i_param.o crypto/asn1/libcrypto-lib-d2i_pr.o crypto/asn1/libcrypto-lib-d2i_pu.o crypto/asn1/libcrypto-lib-evp_asn1.o crypto/asn1/libcrypto-lib-f_int.o crypto/asn1/libcrypto-lib-f_string.o crypto/asn1/libcrypto-lib-i2d_evp.o crypto/asn1/libcrypto-lib-nsseq.o crypto/asn1/libcrypto-lib-p5_pbe.o crypto/asn1/libcrypto-lib-p5_pbev2.o crypto/asn1/libcrypto-lib-p5_scrypt.o crypto/asn1/libcrypto-lib-p8_pkey.o crypto/asn1/libcrypto-lib-t_bitst.o crypto/asn1/libcrypto-lib-t_pkey.o crypto/asn1/libcrypto-lib-t_spki.o crypto/asn1/libcrypto-lib-tasn_dec.o crypto/asn1/libcrypto-lib-tasn_enc.o crypto/asn1/libcrypto-lib-tasn_fre.o crypto/asn1/libcrypto-lib-tasn_new.o crypto/asn1/libcrypto-lib-tasn_prn.o crypto/asn1/libcrypto-lib-tasn_scn.o crypto/asn1/libcrypto-lib-tasn_typ.o crypto/asn1/libcrypto-lib-tasn_utl.o crypto/asn1/libcrypto-lib-x_algor.o crypto/asn1/libcrypto-lib-x_bignum.o crypto/asn1/libcrypto-lib-x_info.o crypto/asn1/libcrypto-lib-x_int64.o crypto/asn1/libcrypto-lib-x_pkey.o crypto/asn1/libcrypto-lib-x_sig.o crypto/asn1/libcrypto-lib-x_spki.o crypto/asn1/libcrypto-lib-x_val.o crypto/async/arch/libcrypto-lib-async_null.o crypto/async/arch/libcrypto-lib-async_posix.o crypto/async/arch/libcrypto-lib-async_win.o crypto/async/libcrypto-lib-async.o crypto/async/libcrypto-lib-async_err.o crypto/async/libcrypto-lib-async_wait.o crypto/bio/libcrypto-lib-bf_buff.o crypto/bio/libcrypto-lib-bf_lbuf.o crypto/bio/libcrypto-lib-bf_nbio.o crypto/bio/libcrypto-lib-bf_null.o crypto/bio/libcrypto-lib-bf_prefix.o crypto/bio/libcrypto-lib-bf_readbuff.o crypto/bio/libcrypto-lib-bio_addr.o crypto/bio/libcrypto-lib-bio_cb.o crypto/bio/libcrypto-lib-bio_dump.o crypto/bio/libcrypto-lib-bio_err.o crypto/bio/libcrypto-lib-bio_lib.o crypto/bio/libcrypto-lib-bio_meth.o crypto/bio/libcrypto-lib-bio_print.o crypto/bio/libcrypto-lib-bio_sock.o crypto/bio/libcrypto-lib-bio_sock2.o crypto/bio/libcrypto-lib-bss_acpt.o crypto/bio/libcrypto-lib-bss_bio.o crypto/bio/libcrypto-lib-bss_conn.o crypto/bio/libcrypto-lib-bss_core.o crypto/bio/libcrypto-lib-bss_dgram.o crypto/bio/libcrypto-lib-bss_dgram_pair.o crypto/bio/libcrypto-lib-bss_fd.o crypto/bio/libcrypto-lib-bss_file.o crypto/bio/libcrypto-lib-bss_log.o crypto/bio/libcrypto-lib-bss_mem.o crypto/bio/libcrypto-lib-bss_null.o crypto/bio/libcrypto-lib-bss_sock.o crypto/bio/libcrypto-lib-ossl_core_bio.o crypto/bn/libcrypto-lib-bn_add.o crypto/bn/libcrypto-lib-bn_asm.o crypto/bn/libcrypto-lib-bn_blind.o crypto/bn/libcrypto-lib-bn_const.o crypto/bn/libcrypto-lib-bn_conv.o crypto/bn/libcrypto-lib-bn_ctx.o crypto/bn/libcrypto-lib-bn_dh.o crypto/bn/libcrypto-lib-bn_div.o crypto/bn/libcrypto-lib-bn_err.o crypto/bn/libcrypto-lib-bn_exp.o crypto/bn/libcrypto-lib-bn_exp2.o crypto/bn/libcrypto-lib-bn_gcd.o crypto/bn/libcrypto-lib-bn_gf2m.o crypto/bn/libcrypto-lib-bn_intern.o crypto/bn/libcrypto-lib-bn_kron.o crypto/bn/libcrypto-lib-bn_lib.o crypto/bn/libcrypto-lib-bn_mod.o crypto/bn/libcrypto-lib-bn_mont.o crypto/bn/libcrypto-lib-bn_mpi.o crypto/bn/libcrypto-lib-bn_mul.o crypto/bn/libcrypto-lib-bn_nist.o crypto/bn/libcrypto-lib-bn_prime.o crypto/bn/libcrypto-lib-bn_print.o crypto/bn/libcrypto-lib-bn_rand.o crypto/bn/libcrypto-lib-bn_recp.o crypto/bn/libcrypto-lib-bn_rsa_fips186_4.o crypto/bn/libcrypto-lib-bn_shift.o crypto/bn/libcrypto-lib-bn_sqr.o crypto/bn/libcrypto-lib-bn_sqrt.o crypto/bn/libcrypto-lib-bn_srp.o crypto/bn/libcrypto-lib-bn_word.o crypto/buffer/libcrypto-lib-buf_err.o crypto/buffer/libcrypto-lib-buffer.o crypto/conf/libcrypto-lib-conf_api.o crypto/conf/libcrypto-lib-conf_def.o crypto/conf/libcrypto-lib-conf_err.o crypto/conf/libcrypto-lib-conf_lib.o crypto/conf/libcrypto-lib-conf_mall.o crypto/conf/libcrypto-lib-conf_mod.o crypto/conf/libcrypto-lib-conf_sap.o crypto/conf/libcrypto-lib-conf_ssl.o crypto/dso/libcrypto-lib-dso_dl.o crypto/dso/libcrypto-lib-dso_dlfcn.o crypto/dso/libcrypto-lib-dso_err.o crypto/dso/libcrypto-lib-dso_lib.o crypto/dso/libcrypto-lib-dso_openssl.o crypto/dso/libcrypto-lib-dso_vms.o crypto/dso/libcrypto-lib-dso_win32.o crypto/encode_decode/libcrypto-lib-decoder_err.o crypto/encode_decode/libcrypto-lib-decoder_lib.o crypto/encode_decode/libcrypto-lib-decoder_meth.o crypto/encode_decode/libcrypto-lib-decoder_pkey.o crypto/encode_decode/libcrypto-lib-encoder_err.o crypto/encode_decode/libcrypto-lib-encoder_lib.o crypto/encode_decode/libcrypto-lib-encoder_meth.o crypto/encode_decode/libcrypto-lib-encoder_pkey.o crypto/err/libcrypto-lib-err.o crypto/err/libcrypto-lib-err_all.o crypto/err/libcrypto-lib-err_all_legacy.o crypto/err/libcrypto-lib-err_blocks.o crypto/err/libcrypto-lib-err_mark.o crypto/err/libcrypto-lib-err_prn.o crypto/err/libcrypto-lib-err_save.o crypto/ess/libcrypto-lib-ess_asn1.o crypto/ess/libcrypto-lib-ess_err.o crypto/ess/libcrypto-lib-ess_lib.o crypto/evp/libcrypto-lib-asymcipher.o crypto/evp/libcrypto-lib-bio_b64.o crypto/evp/libcrypto-lib-bio_enc.o crypto/evp/libcrypto-lib-bio_md.o crypto/evp/libcrypto-lib-bio_ok.o crypto/evp/libcrypto-lib-c_allc.o crypto/evp/libcrypto-lib-c_alld.o crypto/evp/libcrypto-lib-cmeth_lib.o crypto/evp/libcrypto-lib-ctrl_params_translate.o crypto/evp/libcrypto-lib-dh_ctrl.o crypto/evp/libcrypto-lib-dh_support.o crypto/evp/libcrypto-lib-digest.o crypto/evp/libcrypto-lib-dsa_ctrl.o crypto/evp/libcrypto-lib-e_aes.o crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha1.o crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha256.o crypto/evp/libcrypto-lib-e_aria.o crypto/evp/libcrypto-lib-e_bf.o crypto/evp/libcrypto-lib-e_cast.o crypto/evp/libcrypto-lib-e_chacha20_poly1305.o crypto/evp/libcrypto-lib-e_des.o crypto/evp/libcrypto-lib-e_des3.o crypto/evp/libcrypto-lib-e_idea.o crypto/evp/libcrypto-lib-e_null.o crypto/evp/libcrypto-lib-e_rc2.o crypto/evp/libcrypto-lib-e_rc4.o crypto/evp/libcrypto-lib-e_rc4_hmac_md5.o crypto/evp/libcrypto-lib-e_rc5.o crypto/evp/libcrypto-lib-e_sm4.o crypto/evp/libcrypto-lib-e_xcbc_d.o crypto/evp/libcrypto-lib-ec_ctrl.o crypto/evp/libcrypto-lib-ec_support.o crypto/evp/libcrypto-lib-encode.o crypto/evp/libcrypto-lib-evp_cnf.o crypto/evp/libcrypto-lib-evp_enc.o crypto/evp/libcrypto-lib-evp_err.o crypto/evp/libcrypto-lib-evp_fetch.o crypto/evp/libcrypto-lib-evp_key.o crypto/evp/libcrypto-lib-evp_lib.o crypto/evp/libcrypto-lib-evp_pbe.o crypto/evp/libcrypto-lib-evp_pkey.o crypto/evp/libcrypto-lib-evp_rand.o crypto/evp/libcrypto-lib-evp_utils.o crypto/evp/libcrypto-lib-exchange.o crypto/evp/libcrypto-lib-kdf_lib.o crypto/evp/libcrypto-lib-kdf_meth.o crypto/evp/libcrypto-lib-kem.o crypto/evp/libcrypto-lib-keymgmt_lib.o crypto/evp/libcrypto-lib-keymgmt_meth.o crypto/evp/libcrypto-lib-legacy_md5.o crypto/evp/libcrypto-lib-legacy_md5_sha1.o crypto/evp/libcrypto-lib-legacy_sha.o crypto/evp/libcrypto-lib-m_null.o crypto/evp/libcrypto-lib-m_sigver.o crypto/evp/libcrypto-lib-mac_lib.o crypto/evp/libcrypto-lib-mac_meth.o crypto/evp/libcrypto-lib-names.o crypto/evp/libcrypto-lib-p5_crpt.o crypto/evp/libcrypto-lib-p5_crpt2.o crypto/evp/libcrypto-lib-p_legacy.o crypto/evp/libcrypto-lib-p_lib.o crypto/evp/libcrypto-lib-p_open.o crypto/evp/libcrypto-lib-p_seal.o crypto/evp/libcrypto-lib-p_sign.o crypto/evp/libcrypto-lib-p_verify.o crypto/evp/libcrypto-lib-pbe_scrypt.o crypto/evp/libcrypto-lib-pmeth_check.o crypto/evp/libcrypto-lib-pmeth_gn.o crypto/evp/libcrypto-lib-pmeth_lib.o crypto/evp/libcrypto-lib-signature.o crypto/ffc/libcrypto-lib-ffc_backend.o crypto/ffc/libcrypto-lib-ffc_dh.o crypto/ffc/libcrypto-lib-ffc_key_generate.o crypto/ffc/libcrypto-lib-ffc_key_validate.o crypto/ffc/libcrypto-lib-ffc_params.o crypto/ffc/libcrypto-lib-ffc_params_generate.o crypto/ffc/libcrypto-lib-ffc_params_validate.o crypto/hashtable/libcrypto-lib-hashtable.o crypto/hmac/libcrypto-lib-hmac.o crypto/hpke/libcrypto-lib-hpke.o crypto/hpke/libcrypto-lib-hpke_util.o crypto/http/libcrypto-lib-http_client.o crypto/http/libcrypto-lib-http_err.o crypto/http/libcrypto-lib-http_lib.o crypto/kdf/libcrypto-lib-kdf_err.o crypto/lhash/libcrypto-lib-lh_stats.o crypto/lhash/libcrypto-lib-lhash.o crypto/libcrypto-lib-asn1_dsa.o crypto/libcrypto-lib-bsearch.o crypto/libcrypto-lib-comp_methods.o crypto/libcrypto-lib-context.o crypto/libcrypto-lib-core_algorithm.o crypto/libcrypto-lib-core_fetch.o crypto/libcrypto-lib-core_namemap.o crypto/libcrypto-lib-cpt_err.o crypto/libcrypto-lib-cpuid.o crypto/libcrypto-lib-cryptlib.o crypto/libcrypto-lib-ctype.o crypto/libcrypto-lib-cversion.o crypto/libcrypto-lib-defaults.o crypto/libcrypto-lib-der_writer.o crypto/libcrypto-lib-deterministic_nonce.o crypto/libcrypto-lib-ebcdic.o crypto/libcrypto-lib-ex_data.o crypto/libcrypto-lib-getenv.o crypto/libcrypto-lib-indicator_core.o crypto/libcrypto-lib-info.o crypto/libcrypto-lib-init.o crypto/libcrypto-lib-initthread.o crypto/libcrypto-lib-mem.o crypto/libcrypto-lib-mem_clr.o crypto/libcrypto-lib-mem_sec.o crypto/libcrypto-lib-o_dir.o crypto/libcrypto-lib-o_fopen.o crypto/libcrypto-lib-o_init.o crypto/libcrypto-lib-o_str.o crypto/libcrypto-lib-o_time.o crypto/libcrypto-lib-packet.o crypto/libcrypto-lib-param_build.o crypto/libcrypto-lib-param_build_set.o crypto/libcrypto-lib-params.o crypto/libcrypto-lib-params_dup.o crypto/libcrypto-lib-params_from_text.o crypto/libcrypto-lib-params_idx.o crypto/libcrypto-lib-passphrase.o crypto/libcrypto-lib-provider.o crypto/libcrypto-lib-provider_child.o crypto/libcrypto-lib-provider_conf.o crypto/libcrypto-lib-provider_core.o crypto/libcrypto-lib-provider_predefined.o crypto/libcrypto-lib-punycode.o crypto/libcrypto-lib-quic_vlint.o crypto/libcrypto-lib-self_test_core.o crypto/libcrypto-lib-sleep.o crypto/libcrypto-lib-sparse_array.o crypto/libcrypto-lib-threads_lib.o crypto/libcrypto-lib-threads_none.o crypto/libcrypto-lib-threads_pthread.o crypto/libcrypto-lib-threads_win.o crypto/libcrypto-lib-time.o crypto/libcrypto-lib-trace.o crypto/libcrypto-lib-uid.o crypto/md5/libcrypto-lib-md5_dgst.o crypto/md5/libcrypto-lib-md5_one.o crypto/md5/libcrypto-lib-md5_sha1.o crypto/modes/libcrypto-lib-cbc128.o crypto/modes/libcrypto-lib-ccm128.o crypto/modes/libcrypto-lib-cfb128.o crypto/modes/libcrypto-lib-ctr128.o crypto/modes/libcrypto-lib-cts128.o crypto/modes/libcrypto-lib-gcm128.o crypto/modes/libcrypto-lib-ocb128.o crypto/modes/libcrypto-lib-ofb128.o crypto/modes/libcrypto-lib-siv128.o crypto/modes/libcrypto-lib-wrap128.o crypto/modes/libcrypto-lib-xts128.o crypto/modes/libcrypto-lib-xts128gb.o crypto/objects/libcrypto-lib-o_names.o crypto/objects/libcrypto-lib-obj_dat.o crypto/objects/libcrypto-lib-obj_err.o crypto/objects/libcrypto-lib-obj_lib.o crypto/objects/libcrypto-lib-obj_xref.o crypto/pem/libcrypto-lib-pem_all.o crypto/pem/libcrypto-lib-pem_err.o crypto/pem/libcrypto-lib-pem_info.o crypto/pem/libcrypto-lib-pem_lib.o crypto/pem/libcrypto-lib-pem_oth.o crypto/pem/libcrypto-lib-pem_pk8.o crypto/pem/libcrypto-lib-pem_pkey.o crypto/pem/libcrypto-lib-pem_sign.o crypto/pem/libcrypto-lib-pem_x509.o crypto/pem/libcrypto-lib-pem_xaux.o crypto/pem/libcrypto-lib-pvkfmt.o crypto/pkcs12/libcrypto-lib-p12_add.o crypto/pkcs12/libcrypto-lib-p12_asn.o crypto/pkcs12/libcrypto-lib-p12_attr.o crypto/pkcs12/libcrypto-lib-p12_crpt.o crypto/pkcs12/libcrypto-lib-p12_crt.o crypto/pkcs12/libcrypto-lib-p12_decr.o crypto/pkcs12/libcrypto-lib-p12_init.o crypto/pkcs12/libcrypto-lib-p12_key.o crypto/pkcs12/libcrypto-lib-p12_kiss.o crypto/pkcs12/libcrypto-lib-p12_mutl.o crypto/pkcs12/libcrypto-lib-p12_npas.o crypto/pkcs12/libcrypto-lib-p12_p8d.o crypto/pkcs12/libcrypto-lib-p12_p8e.o crypto/pkcs12/libcrypto-lib-p12_sbag.o crypto/pkcs12/libcrypto-lib-p12_utl.o crypto/pkcs12/libcrypto-lib-pk12err.o crypto/pkcs7/libcrypto-lib-bio_pk7.o crypto/pkcs7/libcrypto-lib-pk7_asn1.o crypto/pkcs7/libcrypto-lib-pk7_attr.o crypto/pkcs7/libcrypto-lib-pk7_doit.o crypto/pkcs7/libcrypto-lib-pk7_lib.o crypto/pkcs7/libcrypto-lib-pk7_mime.o crypto/pkcs7/libcrypto-lib-pk7_smime.o crypto/pkcs7/libcrypto-lib-pkcs7err.o crypto/property/libcrypto-lib-defn_cache.o crypto/property/libcrypto-lib-property.o crypto/property/libcrypto-lib-property_err.o crypto/property/libcrypto-lib-property_parse.o crypto/property/libcrypto-lib-property_query.o crypto/property/libcrypto-lib-property_string.o crypto/rand/libcrypto-lib-prov_seed.o crypto/rand/libcrypto-lib-rand_deprecated.o crypto/rand/libcrypto-lib-rand_err.o crypto/rand/libcrypto-lib-rand_lib.o crypto/rand/libcrypto-lib-rand_pool.o crypto/rand/libcrypto-lib-rand_uniform.o crypto/rand/libcrypto-lib-randfile.o crypto/rsa/libcrypto-lib-rsa_ameth.o crypto/rsa/libcrypto-lib-rsa_asn1.o crypto/rsa/libcrypto-lib-rsa_backend.o crypto/rsa/libcrypto-lib-rsa_chk.o crypto/rsa/libcrypto-lib-rsa_crpt.o crypto/rsa/libcrypto-lib-rsa_err.o crypto/rsa/libcrypto-lib-rsa_gen.o crypto/rsa/libcrypto-lib-rsa_lib.o crypto/rsa/libcrypto-lib-rsa_meth.o crypto/rsa/libcrypto-lib-rsa_mp.o crypto/rsa/libcrypto-lib-rsa_mp_names.o crypto/rsa/libcrypto-lib-rsa_none.o crypto/rsa/libcrypto-lib-rsa_oaep.o crypto/rsa/libcrypto-lib-rsa_ossl.o crypto/rsa/libcrypto-lib-rsa_pk1.o crypto/rsa/libcrypto-lib-rsa_pmeth.o crypto/rsa/libcrypto-lib-rsa_prn.o crypto/rsa/libcrypto-lib-rsa_pss.o crypto/rsa/libcrypto-lib-rsa_saos.o crypto/rsa/libcrypto-lib-rsa_schemes.o crypto/rsa/libcrypto-lib-rsa_sign.o crypto/rsa/libcrypto-lib-rsa_sp800_56b_check.o crypto/rsa/libcrypto-lib-rsa_sp800_56b_gen.o crypto/rsa/libcrypto-lib-rsa_x931.o crypto/sha/libcrypto-lib-keccak1600.o crypto/sha/libcrypto-lib-sha1_one.o crypto/sha/libcrypto-lib-sha1dgst.o crypto/sha/libcrypto-lib-sha256.o crypto/sha/libcrypto-lib-sha3.o crypto/sha/libcrypto-lib-sha512.o crypto/stack/libcrypto-lib-stack.o crypto/store/libcrypto-lib-store_err.o crypto/store/libcrypto-lib-store_lib.o crypto/store/libcrypto-lib-store_meth.o crypto/store/libcrypto-lib-store_result.o crypto/store/libcrypto-lib-store_strings.o crypto/thread/arch/libcrypto-lib-thread_none.o crypto/thread/arch/libcrypto-lib-thread_posix.o crypto/thread/arch/libcrypto-lib-thread_win.o crypto/thread/libcrypto-lib-api.o crypto/thread/libcrypto-lib-arch.o crypto/thread/libcrypto-lib-internal.o crypto/txt_db/libcrypto-lib-txt_db.o crypto/ui/libcrypto-lib-ui_err.o crypto/ui/libcrypto-lib-ui_lib.o crypto/ui/libcrypto-lib-ui_null.o crypto/ui/libcrypto-lib-ui_openssl.o crypto/ui/libcrypto-lib-ui_util.o crypto/x509/libcrypto-lib-by_dir.o crypto/x509/libcrypto-lib-by_file.o crypto/x509/libcrypto-lib-by_store.o crypto/x509/libcrypto-lib-pcy_cache.o crypto/x509/libcrypto-lib-pcy_data.o crypto/x509/libcrypto-lib-pcy_lib.o crypto/x509/libcrypto-lib-pcy_map.o crypto/x509/libcrypto-lib-pcy_node.o crypto/x509/libcrypto-lib-pcy_tree.o crypto/x509/libcrypto-lib-t_acert.o crypto/x509/libcrypto-lib-t_crl.o crypto/x509/libcrypto-lib-t_req.o crypto/x509/libcrypto-lib-t_x509.o crypto/x509/libcrypto-lib-v3_ac_tgt.o crypto/x509/libcrypto-lib-v3_addr.o crypto/x509/libcrypto-lib-v3_admis.o crypto/x509/libcrypto-lib-v3_akeya.o crypto/x509/libcrypto-lib-v3_akid.o crypto/x509/libcrypto-lib-v3_asid.o crypto/x509/libcrypto-lib-v3_audit_id.o crypto/x509/libcrypto-lib-v3_authattid.o crypto/x509/libcrypto-lib-v3_battcons.o crypto/x509/libcrypto-lib-v3_bcons.o crypto/x509/libcrypto-lib-v3_bitst.o crypto/x509/libcrypto-lib-v3_conf.o crypto/x509/libcrypto-lib-v3_cpols.o crypto/x509/libcrypto-lib-v3_crld.o crypto/x509/libcrypto-lib-v3_enum.o crypto/x509/libcrypto-lib-v3_extku.o crypto/x509/libcrypto-lib-v3_genn.o crypto/x509/libcrypto-lib-v3_group_ac.o crypto/x509/libcrypto-lib-v3_ia5.o crypto/x509/libcrypto-lib-v3_ind_iss.o crypto/x509/libcrypto-lib-v3_info.o crypto/x509/libcrypto-lib-v3_int.o crypto/x509/libcrypto-lib-v3_iobo.o crypto/x509/libcrypto-lib-v3_ist.o crypto/x509/libcrypto-lib-v3_lib.o crypto/x509/libcrypto-lib-v3_ncons.o crypto/x509/libcrypto-lib-v3_no_ass.o crypto/x509/libcrypto-lib-v3_no_rev_avail.o crypto/x509/libcrypto-lib-v3_pci.o crypto/x509/libcrypto-lib-v3_pcia.o crypto/x509/libcrypto-lib-v3_pcons.o crypto/x509/libcrypto-lib-v3_pku.o crypto/x509/libcrypto-lib-v3_pmaps.o crypto/x509/libcrypto-lib-v3_prn.o crypto/x509/libcrypto-lib-v3_purp.o crypto/x509/libcrypto-lib-v3_rolespec.o crypto/x509/libcrypto-lib-v3_san.o crypto/x509/libcrypto-lib-v3_sda.o crypto/x509/libcrypto-lib-v3_single_use.o crypto/x509/libcrypto-lib-v3_skid.o crypto/x509/libcrypto-lib-v3_soa_id.o crypto/x509/libcrypto-lib-v3_sxnet.o crypto/x509/libcrypto-lib-v3_tlsf.o crypto/x509/libcrypto-lib-v3_usernotice.o crypto/x509/libcrypto-lib-v3_utf8.o crypto/x509/libcrypto-lib-v3_utl.o crypto/x509/libcrypto-lib-v3err.o crypto/x509/libcrypto-lib-x509_acert.o crypto/x509/libcrypto-lib-x509_att.o crypto/x509/libcrypto-lib-x509_cmp.o crypto/x509/libcrypto-lib-x509_d2.o crypto/x509/libcrypto-lib-x509_def.o crypto/x509/libcrypto-lib-x509_err.o crypto/x509/libcrypto-lib-x509_ext.o crypto/x509/libcrypto-lib-x509_lu.o crypto/x509/libcrypto-lib-x509_meth.o crypto/x509/libcrypto-lib-x509_obj.o crypto/x509/libcrypto-lib-x509_r2x.o crypto/x509/libcrypto-lib-x509_req.o crypto/x509/libcrypto-lib-x509_set.o
-	$(AR) $(ARFLAGS) libcrypto.a crypto/x509/libcrypto-lib-x509_trust.o crypto/x509/libcrypto-lib-x509_txt.o crypto/x509/libcrypto-lib-x509_v3.o crypto/x509/libcrypto-lib-x509_vfy.o crypto/x509/libcrypto-lib-x509_vpm.o crypto/x509/libcrypto-lib-x509aset.o crypto/x509/libcrypto-lib-x509cset.o crypto/x509/libcrypto-lib-x509name.o crypto/x509/libcrypto-lib-x509rset.o crypto/x509/libcrypto-lib-x509spki.o crypto/x509/libcrypto-lib-x_all.o crypto/x509/libcrypto-lib-x_attrib.o crypto/x509/libcrypto-lib-x_crl.o crypto/x509/libcrypto-lib-x_exten.o crypto/x509/libcrypto-lib-x_ietfatt.o crypto/x509/libcrypto-lib-x_name.o crypto/x509/libcrypto-lib-x_pubkey.o crypto/x509/libcrypto-lib-x_req.o crypto/x509/libcrypto-lib-x_x509.o crypto/x509/libcrypto-lib-x_x509a.o providers/libcrypto-lib-baseprov.o providers/libcrypto-lib-defltprov.o providers/libcrypto-lib-legacyprov.o providers/libcrypto-lib-nullprov.o providers/libcrypto-lib-prov_running.o providers/common/der/libdefault-lib-der_rsa_sig.o providers/common/libdefault-lib-bio_prov.o providers/common/libdefault-lib-capabilities.o providers/common/libdefault-lib-digest_to_nid.o providers/common/libdefault-lib-provider_seeding.o providers/common/libdefault-lib-provider_util.o providers/common/libdefault-lib-securitycheck.o providers/common/libdefault-lib-securitycheck_default.o providers/implementations/asymciphers/libdefault-lib-rsa_enc.o providers/implementations/ciphers/libdefault-lib-cipher_aes.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha1_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha256_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm.o providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm.o providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_wrp.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_fips.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_hw.o providers/implementations/ciphers/libdefault-lib-cipher_cts.o providers/implementations/ciphers/libdefault-lib-cipher_null.o providers/implementations/digests/libdefault-lib-md5_prov.o providers/implementations/digests/libdefault-lib-md5_sha1_prov.o providers/implementations/digests/libdefault-lib-null_prov.o providers/implementations/digests/libdefault-lib-sha2_prov.o providers/implementations/digests/libdefault-lib-sha3_prov.o providers/implementations/encode_decode/libdefault-lib-decode_der2key.o providers/implementations/encode_decode/libdefault-lib-decode_epki2pki.o providers/implementations/encode_decode/libdefault-lib-decode_msblob2key.o providers/implementations/encode_decode/libdefault-lib-decode_pem2der.o providers/implementations/encode_decode/libdefault-lib-decode_pvk2key.o providers/implementations/encode_decode/libdefault-lib-decode_spki2typespki.o providers/implementations/encode_decode/libdefault-lib-encode_key2any.o providers/implementations/encode_decode/libdefault-lib-encode_key2ms.o providers/implementations/encode_decode/libdefault-lib-encode_key2text.o providers/implementations/encode_decode/libdefault-lib-endecoder_common.o providers/implementations/exchange/libdefault-lib-kdf_exch.o providers/implementations/kdfs/libdefault-lib-argon2.o providers/implementations/kdfs/libdefault-lib-hkdf.o providers/implementations/kdfs/libdefault-lib-hmacdrbg_kdf.o providers/implementations/kdfs/libdefault-lib-kbkdf.o providers/implementations/kdfs/libdefault-lib-krb5kdf.o providers/implementations/kdfs/libdefault-lib-pbkdf2.o providers/implementations/kdfs/libdefault-lib-pbkdf2_fips.o providers/implementations/kdfs/libdefault-lib-pkcs12kdf.o providers/implementations/kdfs/libdefault-lib-scrypt.o providers/implementations/kdfs/libdefault-lib-sshkdf.o providers/implementations/kdfs/libdefault-lib-sskdf.o providers/implementations/kdfs/libdefault-lib-tls1_prf.o providers/implementations/kdfs/libdefault-lib-x942kdf.o providers/implementations/kem/libdefault-lib-rsa_kem.o providers/implementations/keymgmt/libdefault-lib-kdf_legacy_kmgmt.o providers/implementations/keymgmt/libdefault-lib-mac_legacy_kmgmt.o providers/implementations/keymgmt/libdefault-lib-rsa_kmgmt.o providers/implementations/macs/libdefault-lib-gmac_prov.o providers/implementations/macs/libdefault-lib-hmac_prov.o providers/implementations/macs/libdefault-lib-kmac_prov.o providers/implementations/rands/libdefault-lib-drbg.o providers/implementations/rands/libdefault-lib-drbg_ctr.o providers/implementations/rands/libdefault-lib-drbg_hash.o providers/implementations/rands/libdefault-lib-drbg_hmac.o providers/implementations/rands/libdefault-lib-seed_src.o providers/implementations/rands/libdefault-lib-seed_src_jitter.o providers/implementations/rands/libdefault-lib-test_rng.o providers/implementations/rands/seeding/libdefault-lib-rand_cpu_x86.o providers/implementations/rands/seeding/libdefault-lib-rand_tsc.o providers/implementations/rands/seeding/libdefault-lib-rand_unix.o providers/implementations/rands/seeding/libdefault-lib-rand_win.o providers/implementations/signature/libdefault-lib-mac_legacy_sig.o providers/implementations/signature/libdefault-lib-rsa_sig.o providers/implementations/storemgmt/libdefault-lib-file_store.o providers/implementations/storemgmt/libdefault-lib-file_store_any2obj.o ssl/record/methods/libdefault-lib-ssl3_cbc.o providers/implementations/kdfs/liblegacy-lib-pbkdf1.o providers/implementations/kdfs/liblegacy-lib-pvkkdf.o providers/common/der/libcommon-lib-der_digests_gen.o providers/common/der/libcommon-lib-der_rsa_gen.o providers/common/der/libcommon-lib-der_rsa_key.o providers/common/der/libcommon-lib-der_wrap_gen.o providers/common/libcommon-lib-provider_ctx.o providers/common/libcommon-lib-provider_err.o providers/implementations/ciphers/libcommon-lib-ciphercommon.o providers/implementations/ciphers/libcommon-lib-ciphercommon_block.o providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm.o providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm_hw.o providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm.o providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm_hw.o providers/implementations/ciphers/libcommon-lib-ciphercommon_hw.o providers/implementations/digests/libcommon-lib-digestcommon.o ssl/record/methods/libcommon-lib-tls_pad.o
+	$(AR) $(ARFLAGS) libcrypto.a crypto/aes/libcrypto-lib-aes_cbc.o crypto/aes/libcrypto-lib-aes_cfb.o crypto/aes/libcrypto-lib-aes_core.o crypto/aes/libcrypto-lib-aes_ecb.o crypto/aes/libcrypto-lib-aes_ige.o crypto/aes/libcrypto-lib-aes_misc.o crypto/aes/libcrypto-lib-aes_ofb.o crypto/aes/libcrypto-lib-aes_wrap.o crypto/asn1/libcrypto-lib-a_bitstr.o crypto/asn1/libcrypto-lib-a_d2i_fp.o crypto/asn1/libcrypto-lib-a_digest.o crypto/asn1/libcrypto-lib-a_dup.o crypto/asn1/libcrypto-lib-a_gentm.o crypto/asn1/libcrypto-lib-a_i2d_fp.o crypto/asn1/libcrypto-lib-a_int.o crypto/asn1/libcrypto-lib-a_mbstr.o crypto/asn1/libcrypto-lib-a_object.o crypto/asn1/libcrypto-lib-a_octet.o crypto/asn1/libcrypto-lib-a_print.o crypto/asn1/libcrypto-lib-a_sign.o crypto/asn1/libcrypto-lib-a_strex.o crypto/asn1/libcrypto-lib-a_strnid.o crypto/asn1/libcrypto-lib-a_time.o crypto/asn1/libcrypto-lib-a_type.o crypto/asn1/libcrypto-lib-a_utctm.o crypto/asn1/libcrypto-lib-a_utf8.o crypto/asn1/libcrypto-lib-a_verify.o crypto/asn1/libcrypto-lib-ameth_lib.o crypto/asn1/libcrypto-lib-asn1_err.o crypto/asn1/libcrypto-lib-asn1_gen.o crypto/asn1/libcrypto-lib-asn1_item_list.o crypto/asn1/libcrypto-lib-asn1_lib.o crypto/asn1/libcrypto-lib-asn1_parse.o crypto/asn1/libcrypto-lib-asn_mime.o crypto/asn1/libcrypto-lib-asn_moid.o crypto/asn1/libcrypto-lib-asn_mstbl.o crypto/asn1/libcrypto-lib-asn_pack.o crypto/asn1/libcrypto-lib-bio_asn1.o crypto/asn1/libcrypto-lib-bio_ndef.o crypto/asn1/libcrypto-lib-d2i_param.o crypto/asn1/libcrypto-lib-d2i_pr.o crypto/asn1/libcrypto-lib-d2i_pu.o crypto/asn1/libcrypto-lib-evp_asn1.o crypto/asn1/libcrypto-lib-f_int.o crypto/asn1/libcrypto-lib-f_string.o crypto/asn1/libcrypto-lib-i2d_evp.o crypto/asn1/libcrypto-lib-nsseq.o crypto/asn1/libcrypto-lib-p5_pbe.o crypto/asn1/libcrypto-lib-p5_pbev2.o crypto/asn1/libcrypto-lib-p5_scrypt.o crypto/asn1/libcrypto-lib-p8_pkey.o crypto/asn1/libcrypto-lib-t_bitst.o crypto/asn1/libcrypto-lib-t_pkey.o crypto/asn1/libcrypto-lib-t_spki.o crypto/asn1/libcrypto-lib-tasn_dec.o crypto/asn1/libcrypto-lib-tasn_enc.o crypto/asn1/libcrypto-lib-tasn_fre.o crypto/asn1/libcrypto-lib-tasn_new.o crypto/asn1/libcrypto-lib-tasn_prn.o crypto/asn1/libcrypto-lib-tasn_scn.o crypto/asn1/libcrypto-lib-tasn_typ.o crypto/asn1/libcrypto-lib-tasn_utl.o crypto/asn1/libcrypto-lib-x_algor.o crypto/asn1/libcrypto-lib-x_bignum.o crypto/asn1/libcrypto-lib-x_info.o crypto/asn1/libcrypto-lib-x_int64.o crypto/asn1/libcrypto-lib-x_long.o crypto/asn1/libcrypto-lib-x_pkey.o crypto/asn1/libcrypto-lib-x_sig.o crypto/asn1/libcrypto-lib-x_spki.o crypto/asn1/libcrypto-lib-x_val.o crypto/async/arch/libcrypto-lib-async_null.o crypto/async/arch/libcrypto-lib-async_posix.o crypto/async/arch/libcrypto-lib-async_win.o crypto/async/libcrypto-lib-async.o crypto/async/libcrypto-lib-async_err.o crypto/async/libcrypto-lib-async_wait.o crypto/bio/libcrypto-lib-bf_buff.o crypto/bio/libcrypto-lib-bf_lbuf.o crypto/bio/libcrypto-lib-bf_nbio.o crypto/bio/libcrypto-lib-bf_null.o crypto/bio/libcrypto-lib-bf_prefix.o crypto/bio/libcrypto-lib-bf_readbuff.o crypto/bio/libcrypto-lib-bio_addr.o crypto/bio/libcrypto-lib-bio_cb.o crypto/bio/libcrypto-lib-bio_dump.o crypto/bio/libcrypto-lib-bio_err.o crypto/bio/libcrypto-lib-bio_lib.o crypto/bio/libcrypto-lib-bio_meth.o crypto/bio/libcrypto-lib-bio_print.o crypto/bio/libcrypto-lib-bio_sock.o crypto/bio/libcrypto-lib-bio_sock2.o crypto/bio/libcrypto-lib-bss_acpt.o crypto/bio/libcrypto-lib-bss_bio.o crypto/bio/libcrypto-lib-bss_conn.o crypto/bio/libcrypto-lib-bss_core.o crypto/bio/libcrypto-lib-bss_dgram.o crypto/bio/libcrypto-lib-bss_dgram_pair.o crypto/bio/libcrypto-lib-bss_fd.o crypto/bio/libcrypto-lib-bss_file.o crypto/bio/libcrypto-lib-bss_log.o crypto/bio/libcrypto-lib-bss_mem.o crypto/bio/libcrypto-lib-bss_null.o crypto/bio/libcrypto-lib-bss_sock.o crypto/bio/libcrypto-lib-ossl_core_bio.o crypto/bn/libcrypto-lib-bn_add.o crypto/bn/libcrypto-lib-bn_asm.o crypto/bn/libcrypto-lib-bn_blind.o crypto/bn/libcrypto-lib-bn_const.o crypto/bn/libcrypto-lib-bn_conv.o crypto/bn/libcrypto-lib-bn_ctx.o crypto/bn/libcrypto-lib-bn_depr.o crypto/bn/libcrypto-lib-bn_dh.o crypto/bn/libcrypto-lib-bn_div.o crypto/bn/libcrypto-lib-bn_err.o crypto/bn/libcrypto-lib-bn_exp.o crypto/bn/libcrypto-lib-bn_exp2.o crypto/bn/libcrypto-lib-bn_gcd.o crypto/bn/libcrypto-lib-bn_gf2m.o crypto/bn/libcrypto-lib-bn_intern.o crypto/bn/libcrypto-lib-bn_kron.o crypto/bn/libcrypto-lib-bn_lib.o crypto/bn/libcrypto-lib-bn_mod.o crypto/bn/libcrypto-lib-bn_mont.o crypto/bn/libcrypto-lib-bn_mpi.o crypto/bn/libcrypto-lib-bn_mul.o crypto/bn/libcrypto-lib-bn_nist.o crypto/bn/libcrypto-lib-bn_prime.o crypto/bn/libcrypto-lib-bn_print.o crypto/bn/libcrypto-lib-bn_rand.o crypto/bn/libcrypto-lib-bn_recp.o crypto/bn/libcrypto-lib-bn_rsa_fips186_4.o crypto/bn/libcrypto-lib-bn_shift.o crypto/bn/libcrypto-lib-bn_sqr.o crypto/bn/libcrypto-lib-bn_sqrt.o crypto/bn/libcrypto-lib-bn_srp.o crypto/bn/libcrypto-lib-bn_word.o crypto/bn/libcrypto-lib-bn_x931p.o crypto/buffer/libcrypto-lib-buf_err.o crypto/buffer/libcrypto-lib-buffer.o crypto/conf/libcrypto-lib-conf_api.o crypto/conf/libcrypto-lib-conf_def.o crypto/conf/libcrypto-lib-conf_err.o crypto/conf/libcrypto-lib-conf_lib.o crypto/conf/libcrypto-lib-conf_mall.o crypto/conf/libcrypto-lib-conf_mod.o crypto/conf/libcrypto-lib-conf_sap.o crypto/conf/libcrypto-lib-conf_ssl.o crypto/dso/libcrypto-lib-dso_dl.o crypto/dso/libcrypto-lib-dso_dlfcn.o crypto/dso/libcrypto-lib-dso_err.o crypto/dso/libcrypto-lib-dso_lib.o crypto/dso/libcrypto-lib-dso_openssl.o crypto/dso/libcrypto-lib-dso_vms.o crypto/dso/libcrypto-lib-dso_win32.o crypto/encode_decode/libcrypto-lib-decoder_err.o crypto/encode_decode/libcrypto-lib-decoder_lib.o crypto/encode_decode/libcrypto-lib-decoder_meth.o crypto/encode_decode/libcrypto-lib-decoder_pkey.o crypto/encode_decode/libcrypto-lib-encoder_err.o crypto/encode_decode/libcrypto-lib-encoder_lib.o crypto/encode_decode/libcrypto-lib-encoder_meth.o crypto/encode_decode/libcrypto-lib-encoder_pkey.o crypto/err/libcrypto-lib-err.o crypto/err/libcrypto-lib-err_all.o crypto/err/libcrypto-lib-err_all_legacy.o crypto/err/libcrypto-lib-err_blocks.o crypto/err/libcrypto-lib-err_mark.o crypto/err/libcrypto-lib-err_prn.o crypto/err/libcrypto-lib-err_save.o crypto/ess/libcrypto-lib-ess_asn1.o crypto/ess/libcrypto-lib-ess_err.o crypto/ess/libcrypto-lib-ess_lib.o crypto/evp/libcrypto-lib-asymcipher.o crypto/evp/libcrypto-lib-bio_b64.o crypto/evp/libcrypto-lib-bio_enc.o crypto/evp/libcrypto-lib-bio_md.o crypto/evp/libcrypto-lib-bio_ok.o crypto/evp/libcrypto-lib-c_allc.o crypto/evp/libcrypto-lib-c_alld.o crypto/evp/libcrypto-lib-cmeth_lib.o crypto/evp/libcrypto-lib-ctrl_params_translate.o crypto/evp/libcrypto-lib-dh_ctrl.o crypto/evp/libcrypto-lib-dh_support.o crypto/evp/libcrypto-lib-digest.o crypto/evp/libcrypto-lib-dsa_ctrl.o crypto/evp/libcrypto-lib-e_aes.o crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha1.o crypto/evp/libcrypto-lib-e_aes_cbc_hmac_sha256.o crypto/evp/libcrypto-lib-e_aria.o crypto/evp/libcrypto-lib-e_bf.o crypto/evp/libcrypto-lib-e_cast.o crypto/evp/libcrypto-lib-e_chacha20_poly1305.o crypto/evp/libcrypto-lib-e_des.o crypto/evp/libcrypto-lib-e_des3.o crypto/evp/libcrypto-lib-e_idea.o crypto/evp/libcrypto-lib-e_null.o crypto/evp/libcrypto-lib-e_old.o crypto/evp/libcrypto-lib-e_rc2.o crypto/evp/libcrypto-lib-e_rc4.o crypto/evp/libcrypto-lib-e_rc4_hmac_md5.o crypto/evp/libcrypto-lib-e_rc5.o crypto/evp/libcrypto-lib-e_sm4.o crypto/evp/libcrypto-lib-e_xcbc_d.o crypto/evp/libcrypto-lib-ec_ctrl.o crypto/evp/libcrypto-lib-ec_support.o crypto/evp/libcrypto-lib-encode.o crypto/evp/libcrypto-lib-evp_cnf.o crypto/evp/libcrypto-lib-evp_enc.o crypto/evp/libcrypto-lib-evp_err.o crypto/evp/libcrypto-lib-evp_fetch.o crypto/evp/libcrypto-lib-evp_key.o crypto/evp/libcrypto-lib-evp_lib.o crypto/evp/libcrypto-lib-evp_pbe.o crypto/evp/libcrypto-lib-evp_pkey.o crypto/evp/libcrypto-lib-evp_rand.o crypto/evp/libcrypto-lib-evp_utils.o crypto/evp/libcrypto-lib-exchange.o crypto/evp/libcrypto-lib-kdf_lib.o crypto/evp/libcrypto-lib-kdf_meth.o crypto/evp/libcrypto-lib-kem.o crypto/evp/libcrypto-lib-keymgmt_lib.o crypto/evp/libcrypto-lib-keymgmt_meth.o crypto/evp/libcrypto-lib-legacy_md5.o crypto/evp/libcrypto-lib-legacy_md5_sha1.o crypto/evp/libcrypto-lib-legacy_sha.o crypto/evp/libcrypto-lib-m_null.o crypto/evp/libcrypto-lib-m_sigver.o crypto/evp/libcrypto-lib-mac_lib.o crypto/evp/libcrypto-lib-mac_meth.o crypto/evp/libcrypto-lib-names.o crypto/evp/libcrypto-lib-p5_crpt.o crypto/evp/libcrypto-lib-p5_crpt2.o crypto/evp/libcrypto-lib-p_dec.o crypto/evp/libcrypto-lib-p_enc.o crypto/evp/libcrypto-lib-p_legacy.o crypto/evp/libcrypto-lib-p_lib.o crypto/evp/libcrypto-lib-p_open.o crypto/evp/libcrypto-lib-p_seal.o crypto/evp/libcrypto-lib-p_sign.o crypto/evp/libcrypto-lib-p_verify.o crypto/evp/libcrypto-lib-pbe_scrypt.o crypto/evp/libcrypto-lib-pmeth_check.o crypto/evp/libcrypto-lib-pmeth_gn.o crypto/evp/libcrypto-lib-pmeth_lib.o crypto/evp/libcrypto-lib-signature.o crypto/ffc/libcrypto-lib-ffc_backend.o crypto/ffc/libcrypto-lib-ffc_dh.o crypto/ffc/libcrypto-lib-ffc_key_generate.o crypto/ffc/libcrypto-lib-ffc_key_validate.o crypto/ffc/libcrypto-lib-ffc_params.o crypto/ffc/libcrypto-lib-ffc_params_generate.o crypto/ffc/libcrypto-lib-ffc_params_validate.o crypto/hashtable/libcrypto-lib-hashtable.o crypto/hmac/libcrypto-lib-hmac.o crypto/hpke/libcrypto-lib-hpke.o crypto/hpke/libcrypto-lib-hpke_util.o crypto/http/libcrypto-lib-http_client.o crypto/http/libcrypto-lib-http_err.o crypto/http/libcrypto-lib-http_lib.o crypto/kdf/libcrypto-lib-kdf_err.o crypto/lhash/libcrypto-lib-lh_stats.o crypto/lhash/libcrypto-lib-lhash.o crypto/libcrypto-lib-asn1_dsa.o crypto/libcrypto-lib-bsearch.o crypto/libcrypto-lib-comp_methods.o crypto/libcrypto-lib-context.o crypto/libcrypto-lib-core_algorithm.o crypto/libcrypto-lib-core_fetch.o crypto/libcrypto-lib-core_namemap.o crypto/libcrypto-lib-cpt_err.o crypto/libcrypto-lib-cpuid.o crypto/libcrypto-lib-cryptlib.o crypto/libcrypto-lib-ctype.o crypto/libcrypto-lib-cversion.o crypto/libcrypto-lib-defaults.o crypto/libcrypto-lib-der_writer.o crypto/libcrypto-lib-deterministic_nonce.o crypto/libcrypto-lib-ebcdic.o crypto/libcrypto-lib-ex_data.o crypto/libcrypto-lib-getenv.o crypto/libcrypto-lib-indicator_core.o crypto/libcrypto-lib-info.o crypto/libcrypto-lib-init.o crypto/libcrypto-lib-initthread.o crypto/libcrypto-lib-mem.o crypto/libcrypto-lib-mem_clr.o crypto/libcrypto-lib-mem_sec.o crypto/libcrypto-lib-o_dir.o crypto/libcrypto-lib-o_fopen.o crypto/libcrypto-lib-o_init.o crypto/libcrypto-lib-o_str.o crypto/libcrypto-lib-o_time.o crypto/libcrypto-lib-packet.o crypto/libcrypto-lib-param_build.o crypto/libcrypto-lib-param_build_set.o crypto/libcrypto-lib-params.o crypto/libcrypto-lib-params_dup.o crypto/libcrypto-lib-params_from_text.o crypto/libcrypto-lib-params_idx.o crypto/libcrypto-lib-passphrase.o crypto/libcrypto-lib-provider.o crypto/libcrypto-lib-provider_child.o crypto/libcrypto-lib-provider_conf.o crypto/libcrypto-lib-provider_core.o crypto/libcrypto-lib-provider_predefined.o crypto/libcrypto-lib-punycode.o crypto/libcrypto-lib-quic_vlint.o crypto/libcrypto-lib-self_test_core.o crypto/libcrypto-lib-sleep.o crypto/libcrypto-lib-sparse_array.o crypto/libcrypto-lib-threads_lib.o crypto/libcrypto-lib-threads_none.o crypto/libcrypto-lib-threads_pthread.o crypto/libcrypto-lib-threads_win.o crypto/libcrypto-lib-time.o crypto/libcrypto-lib-trace.o crypto/libcrypto-lib-uid.o crypto/md5/libcrypto-lib-md5_dgst.o crypto/md5/libcrypto-lib-md5_one.o crypto/md5/libcrypto-lib-md5_sha1.o crypto/modes/libcrypto-lib-cbc128.o crypto/modes/libcrypto-lib-ccm128.o crypto/modes/libcrypto-lib-cfb128.o crypto/modes/libcrypto-lib-ctr128.o crypto/modes/libcrypto-lib-cts128.o crypto/modes/libcrypto-lib-gcm128.o crypto/modes/libcrypto-lib-ocb128.o crypto/modes/libcrypto-lib-ofb128.o crypto/modes/libcrypto-lib-siv128.o crypto/modes/libcrypto-lib-wrap128.o crypto/modes/libcrypto-lib-xts128.o crypto/modes/libcrypto-lib-xts128gb.o crypto/objects/libcrypto-lib-o_names.o crypto/objects/libcrypto-lib-obj_dat.o crypto/objects/libcrypto-lib-obj_err.o crypto/objects/libcrypto-lib-obj_lib.o crypto/objects/libcrypto-lib-obj_xref.o crypto/pem/libcrypto-lib-pem_all.o crypto/pem/libcrypto-lib-pem_err.o crypto/pem/libcrypto-lib-pem_info.o crypto/pem/libcrypto-lib-pem_lib.o crypto/pem/libcrypto-lib-pem_oth.o crypto/pem/libcrypto-lib-pem_pk8.o crypto/pem/libcrypto-lib-pem_pkey.o crypto/pem/libcrypto-lib-pem_sign.o crypto/pem/libcrypto-lib-pem_x509.o crypto/pem/libcrypto-lib-pem_xaux.o crypto/pem/libcrypto-lib-pvkfmt.o crypto/pkcs12/libcrypto-lib-p12_add.o crypto/pkcs12/libcrypto-lib-p12_asn.o crypto/pkcs12/libcrypto-lib-p12_attr.o crypto/pkcs12/libcrypto-lib-p12_crpt.o crypto/pkcs12/libcrypto-lib-p12_crt.o crypto/pkcs12/libcrypto-lib-p12_decr.o crypto/pkcs12/libcrypto-lib-p12_init.o crypto/pkcs12/libcrypto-lib-p12_key.o crypto/pkcs12/libcrypto-lib-p12_kiss.o crypto/pkcs12/libcrypto-lib-p12_mutl.o crypto/pkcs12/libcrypto-lib-p12_npas.o crypto/pkcs12/libcrypto-lib-p12_p8d.o crypto/pkcs12/libcrypto-lib-p12_p8e.o crypto/pkcs12/libcrypto-lib-p12_sbag.o crypto/pkcs12/libcrypto-lib-p12_utl.o crypto/pkcs12/libcrypto-lib-pk12err.o crypto/pkcs7/libcrypto-lib-bio_pk7.o crypto/pkcs7/libcrypto-lib-pk7_asn1.o crypto/pkcs7/libcrypto-lib-pk7_attr.o crypto/pkcs7/libcrypto-lib-pk7_doit.o crypto/pkcs7/libcrypto-lib-pk7_lib.o crypto/pkcs7/libcrypto-lib-pk7_mime.o crypto/pkcs7/libcrypto-lib-pk7_smime.o crypto/pkcs7/libcrypto-lib-pkcs7err.o crypto/property/libcrypto-lib-defn_cache.o crypto/property/libcrypto-lib-property.o crypto/property/libcrypto-lib-property_err.o crypto/property/libcrypto-lib-property_parse.o crypto/property/libcrypto-lib-property_query.o crypto/property/libcrypto-lib-property_string.o crypto/rand/libcrypto-lib-prov_seed.o crypto/rand/libcrypto-lib-rand_deprecated.o crypto/rand/libcrypto-lib-rand_err.o crypto/rand/libcrypto-lib-rand_lib.o crypto/rand/libcrypto-lib-rand_meth.o crypto/rand/libcrypto-lib-rand_pool.o crypto/rand/libcrypto-lib-rand_uniform.o crypto/rand/libcrypto-lib-randfile.o crypto/rsa/libcrypto-lib-rsa_ameth.o crypto/rsa/libcrypto-lib-rsa_asn1.o crypto/rsa/libcrypto-lib-rsa_backend.o crypto/rsa/libcrypto-lib-rsa_chk.o crypto/rsa/libcrypto-lib-rsa_crpt.o crypto/rsa/libcrypto-lib-rsa_depr.o crypto/rsa/libcrypto-lib-rsa_err.o crypto/rsa/libcrypto-lib-rsa_gen.o crypto/rsa/libcrypto-lib-rsa_lib.o crypto/rsa/libcrypto-lib-rsa_meth.o crypto/rsa/libcrypto-lib-rsa_mp.o crypto/rsa/libcrypto-lib-rsa_mp_names.o crypto/rsa/libcrypto-lib-rsa_none.o crypto/rsa/libcrypto-lib-rsa_oaep.o crypto/rsa/libcrypto-lib-rsa_ossl.o crypto/rsa/libcrypto-lib-rsa_pk1.o crypto/rsa/libcrypto-lib-rsa_pmeth.o crypto/rsa/libcrypto-lib-rsa_prn.o crypto/rsa/libcrypto-lib-rsa_pss.o crypto/rsa/libcrypto-lib-rsa_saos.o crypto/rsa/libcrypto-lib-rsa_schemes.o crypto/rsa/libcrypto-lib-rsa_sign.o crypto/rsa/libcrypto-lib-rsa_sp800_56b_check.o crypto/rsa/libcrypto-lib-rsa_sp800_56b_gen.o crypto/rsa/libcrypto-lib-rsa_x931.o crypto/rsa/libcrypto-lib-rsa_x931g.o crypto/sha/libcrypto-lib-keccak1600.o crypto/sha/libcrypto-lib-sha1_one.o crypto/sha/libcrypto-lib-sha1dgst.o crypto/sha/libcrypto-lib-sha256.o crypto/sha/libcrypto-lib-sha3.o crypto/sha/libcrypto-lib-sha512.o crypto/stack/libcrypto-lib-stack.o crypto/store/libcrypto-lib-store_err.o crypto/store/libcrypto-lib-store_init.o crypto/store/libcrypto-lib-store_lib.o crypto/store/libcrypto-lib-store_meth.o crypto/store/libcrypto-lib-store_register.o crypto/store/libcrypto-lib-store_result.o crypto/store/libcrypto-lib-store_strings.o crypto/thread/arch/libcrypto-lib-thread_win.o crypto/thread/libcrypto-lib-api.o crypto/txt_db/libcrypto-lib-txt_db.o crypto/ui/libcrypto-lib-ui_err.o crypto/ui/libcrypto-lib-ui_lib.o crypto/ui/libcrypto-lib-ui_null.o crypto/ui/libcrypto-lib-ui_openssl.o crypto/ui/libcrypto-lib-ui_util.o crypto/x509/libcrypto-lib-by_dir.o crypto/x509/libcrypto-lib-by_file.o crypto/x509/libcrypto-lib-by_store.o crypto/x509/libcrypto-lib-pcy_cache.o crypto/x509/libcrypto-lib-pcy_data.o crypto/x509/libcrypto-lib-pcy_lib.o crypto/x509/libcrypto-lib-pcy_map.o crypto/x509/libcrypto-lib-pcy_node.o crypto/x509/libcrypto-lib-pcy_tree.o crypto/x509/libcrypto-lib-t_acert.o crypto/x509/libcrypto-lib-t_crl.o crypto/x509/libcrypto-lib-t_req.o crypto/x509/libcrypto-lib-t_x509.o crypto/x509/libcrypto-lib-v3_ac_tgt.o crypto/x509/libcrypto-lib-v3_addr.o crypto/x509/libcrypto-lib-v3_admis.o crypto/x509/libcrypto-lib-v3_akeya.o crypto/x509/libcrypto-lib-v3_akid.o crypto/x509/libcrypto-lib-v3_asid.o crypto/x509/libcrypto-lib-v3_audit_id.o crypto/x509/libcrypto-lib-v3_authattid.o crypto/x509/libcrypto-lib-v3_battcons.o crypto/x509/libcrypto-lib-v3_bcons.o crypto/x509/libcrypto-lib-v3_bitst.o crypto/x509/libcrypto-lib-v3_conf.o crypto/x509/libcrypto-lib-v3_cpols.o crypto/x509/libcrypto-lib-v3_crld.o crypto/x509/libcrypto-lib-v3_enum.o crypto/x509/libcrypto-lib-v3_extku.o crypto/x509/libcrypto-lib-v3_genn.o crypto/x509/libcrypto-lib-v3_group_ac.o crypto/x509/libcrypto-lib-v3_ia5.o crypto/x509/libcrypto-lib-v3_ind_iss.o crypto/x509/libcrypto-lib-v3_info.o crypto/x509/libcrypto-lib-v3_int.o crypto/x509/libcrypto-lib-v3_iobo.o crypto/x509/libcrypto-lib-v3_ist.o crypto/x509/libcrypto-lib-v3_lib.o crypto/x509/libcrypto-lib-v3_ncons.o crypto/x509/libcrypto-lib-v3_no_ass.o crypto/x509/libcrypto-lib-v3_no_rev_avail.o crypto/x509/libcrypto-lib-v3_pci.o crypto/x509/libcrypto-lib-v3_pcia.o crypto/x509/libcrypto-lib-v3_pcons.o crypto/x509/libcrypto-lib-v3_pku.o crypto/x509/libcrypto-lib-v3_pmaps.o crypto/x509/libcrypto-lib-v3_prn.o crypto/x509/libcrypto-lib-v3_purp.o crypto/x509/libcrypto-lib-v3_rolespec.o crypto/x509/libcrypto-lib-v3_san.o crypto/x509/libcrypto-lib-v3_sda.o crypto/x509/libcrypto-lib-v3_single_use.o crypto/x509/libcrypto-lib-v3_skid.o crypto/x509/libcrypto-lib-v3_soa_id.o crypto/x509/libcrypto-lib-v3_sxnet.o crypto/x509/libcrypto-lib-v3_tlsf.o crypto/x509/libcrypto-lib-v3_usernotice.o crypto/x509/libcrypto-lib-v3_utf8.o crypto/x509/libcrypto-lib-v3_utl.o crypto/x509/libcrypto-lib-v3err.o crypto/x509/libcrypto-lib-x509_acert.o crypto/x509/libcrypto-lib-x509_att.o crypto/x509/libcrypto-lib-x509_cmp.o crypto/x509/libcrypto-lib-x509_d2.o crypto/x509/libcrypto-lib-x509_def.o
+	$(AR) $(ARFLAGS) libcrypto.a crypto/x509/libcrypto-lib-x509_err.o crypto/x509/libcrypto-lib-x509_ext.o crypto/x509/libcrypto-lib-x509_lu.o crypto/x509/libcrypto-lib-x509_meth.o crypto/x509/libcrypto-lib-x509_obj.o crypto/x509/libcrypto-lib-x509_r2x.o crypto/x509/libcrypto-lib-x509_req.o crypto/x509/libcrypto-lib-x509_set.o crypto/x509/libcrypto-lib-x509_trust.o crypto/x509/libcrypto-lib-x509_txt.o crypto/x509/libcrypto-lib-x509_v3.o crypto/x509/libcrypto-lib-x509_vfy.o crypto/x509/libcrypto-lib-x509_vpm.o crypto/x509/libcrypto-lib-x509aset.o crypto/x509/libcrypto-lib-x509cset.o crypto/x509/libcrypto-lib-x509name.o crypto/x509/libcrypto-lib-x509rset.o crypto/x509/libcrypto-lib-x509spki.o crypto/x509/libcrypto-lib-x509type.o crypto/x509/libcrypto-lib-x_all.o crypto/x509/libcrypto-lib-x_attrib.o crypto/x509/libcrypto-lib-x_crl.o crypto/x509/libcrypto-lib-x_exten.o crypto/x509/libcrypto-lib-x_ietfatt.o crypto/x509/libcrypto-lib-x_name.o crypto/x509/libcrypto-lib-x_pubkey.o crypto/x509/libcrypto-lib-x_req.o crypto/x509/libcrypto-lib-x_x509.o crypto/x509/libcrypto-lib-x_x509a.o providers/libcrypto-lib-baseprov.o providers/libcrypto-lib-defltprov.o providers/libcrypto-lib-legacyprov.o providers/libcrypto-lib-nullprov.o providers/libcrypto-lib-prov_running.o providers/common/der/libdefault-lib-der_rsa_sig.o providers/common/libdefault-lib-bio_prov.o providers/common/libdefault-lib-capabilities.o providers/common/libdefault-lib-digest_to_nid.o providers/common/libdefault-lib-provider_seeding.o providers/common/libdefault-lib-provider_util.o providers/common/libdefault-lib-securitycheck.o providers/common/libdefault-lib-securitycheck_default.o providers/implementations/asymciphers/libdefault-lib-rsa_enc.o providers/implementations/ciphers/libdefault-lib-cipher_aes.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha1_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_cbc_hmac_sha256_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm.o providers/implementations/ciphers/libdefault-lib-cipher_aes_ccm_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm.o providers/implementations/ciphers/libdefault-lib-cipher_aes_gcm_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_hw.o providers/implementations/ciphers/libdefault-lib-cipher_aes_wrp.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_fips.o providers/implementations/ciphers/libdefault-lib-cipher_aes_xts_hw.o providers/implementations/ciphers/libdefault-lib-cipher_cts.o providers/implementations/ciphers/libdefault-lib-cipher_null.o providers/implementations/digests/libdefault-lib-md5_prov.o providers/implementations/digests/libdefault-lib-md5_sha1_prov.o providers/implementations/digests/libdefault-lib-null_prov.o providers/implementations/digests/libdefault-lib-sha2_prov.o providers/implementations/digests/libdefault-lib-sha3_prov.o providers/implementations/encode_decode/libdefault-lib-decode_der2key.o providers/implementations/encode_decode/libdefault-lib-decode_epki2pki.o providers/implementations/encode_decode/libdefault-lib-decode_msblob2key.o providers/implementations/encode_decode/libdefault-lib-decode_pem2der.o providers/implementations/encode_decode/libdefault-lib-decode_pvk2key.o providers/implementations/encode_decode/libdefault-lib-decode_spki2typespki.o providers/implementations/encode_decode/libdefault-lib-encode_key2any.o providers/implementations/encode_decode/libdefault-lib-encode_key2ms.o providers/implementations/encode_decode/libdefault-lib-encode_key2text.o providers/implementations/encode_decode/libdefault-lib-endecoder_common.o providers/implementations/exchange/libdefault-lib-kdf_exch.o providers/implementations/kdfs/libdefault-lib-argon2.o providers/implementations/kdfs/libdefault-lib-hkdf.o providers/implementations/kdfs/libdefault-lib-hmacdrbg_kdf.o providers/implementations/kdfs/libdefault-lib-kbkdf.o providers/implementations/kdfs/libdefault-lib-krb5kdf.o providers/implementations/kdfs/libdefault-lib-pbkdf2.o providers/implementations/kdfs/libdefault-lib-pbkdf2_fips.o providers/implementations/kdfs/libdefault-lib-pkcs12kdf.o providers/implementations/kdfs/libdefault-lib-scrypt.o providers/implementations/kdfs/libdefault-lib-sshkdf.o providers/implementations/kdfs/libdefault-lib-sskdf.o providers/implementations/kdfs/libdefault-lib-tls1_prf.o providers/implementations/kdfs/libdefault-lib-x942kdf.o providers/implementations/kem/libdefault-lib-rsa_kem.o providers/implementations/keymgmt/libdefault-lib-kdf_legacy_kmgmt.o providers/implementations/keymgmt/libdefault-lib-mac_legacy_kmgmt.o providers/implementations/keymgmt/libdefault-lib-rsa_kmgmt.o providers/implementations/macs/libdefault-lib-gmac_prov.o providers/implementations/macs/libdefault-lib-hmac_prov.o providers/implementations/macs/libdefault-lib-kmac_prov.o providers/implementations/rands/libdefault-lib-drbg.o providers/implementations/rands/libdefault-lib-drbg_ctr.o providers/implementations/rands/libdefault-lib-drbg_hash.o providers/implementations/rands/libdefault-lib-drbg_hmac.o providers/implementations/rands/libdefault-lib-seed_src.o providers/implementations/rands/libdefault-lib-seed_src_jitter.o providers/implementations/rands/libdefault-lib-test_rng.o providers/implementations/rands/seeding/libdefault-lib-rand_cpu_x86.o providers/implementations/rands/seeding/libdefault-lib-rand_tsc.o providers/implementations/rands/seeding/libdefault-lib-rand_unix.o providers/implementations/rands/seeding/libdefault-lib-rand_win.o providers/implementations/signature/libdefault-lib-mac_legacy_sig.o providers/implementations/signature/libdefault-lib-rsa_sig.o providers/implementations/storemgmt/libdefault-lib-file_store.o providers/implementations/storemgmt/libdefault-lib-file_store_any2obj.o ssl/record/methods/libdefault-lib-ssl3_cbc.o providers/implementations/kdfs/liblegacy-lib-pbkdf1.o providers/implementations/kdfs/liblegacy-lib-pvkkdf.o providers/common/der/libcommon-lib-der_digests_gen.o providers/common/der/libcommon-lib-der_rsa_gen.o providers/common/der/libcommon-lib-der_rsa_key.o providers/common/der/libcommon-lib-der_wrap_gen.o providers/common/libcommon-lib-provider_ctx.o providers/common/libcommon-lib-provider_err.o providers/implementations/ciphers/libcommon-lib-ciphercommon.o providers/implementations/ciphers/libcommon-lib-ciphercommon_block.o providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm.o providers/implementations/ciphers/libcommon-lib-ciphercommon_ccm_hw.o providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm.o providers/implementations/ciphers/libcommon-lib-ciphercommon_gcm_hw.o providers/implementations/ciphers/libcommon-lib-ciphercommon_hw.o providers/implementations/digests/libcommon-lib-digestcommon.o ssl/record/methods/libcommon-lib-tls_pad.o
 	$(RANLIB) $@ || echo Never mind.
 crypto/aes/libcrypto-lib-aes_cbc.o: crypto/aes/aes_cbc.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/aes/libcrypto-lib-aes_cbc.d.tmp -c -o $@ crypto/aes/aes_cbc.c
@@ -3964,6 +4181,14 @@ crypto/aes/libcrypto-lib-aes_ecb.o: crypto/aes/aes_ecb.c
 		rm -f crypto/aes/libcrypto-lib-aes_ecb.d.tmp; \
 	else \
 		mv crypto/aes/libcrypto-lib-aes_ecb.d.tmp crypto/aes/libcrypto-lib-aes_ecb.d; \
+	fi
+crypto/aes/libcrypto-lib-aes_ige.o: crypto/aes/aes_ige.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/aes/libcrypto-lib-aes_ige.d.tmp -c -o $@ crypto/aes/aes_ige.c
+	@touch crypto/aes/libcrypto-lib-aes_ige.d.tmp
+	@if cmp crypto/aes/libcrypto-lib-aes_ige.d.tmp crypto/aes/libcrypto-lib-aes_ige.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/aes/libcrypto-lib-aes_ige.d.tmp; \
+	else \
+		mv crypto/aes/libcrypto-lib-aes_ige.d.tmp crypto/aes/libcrypto-lib-aes_ige.d; \
 	fi
 crypto/aes/libcrypto-lib-aes_misc.o: crypto/aes/aes_misc.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/aes/libcrypto-lib-aes_misc.d.tmp -c -o $@ crypto/aes/aes_misc.c
@@ -4453,6 +4678,14 @@ crypto/asn1/libcrypto-lib-x_int64.o: crypto/asn1/x_int64.c
 	else \
 		mv crypto/asn1/libcrypto-lib-x_int64.d.tmp crypto/asn1/libcrypto-lib-x_int64.d; \
 	fi
+crypto/asn1/libcrypto-lib-x_long.o: crypto/asn1/x_long.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/asn1/libcrypto-lib-x_long.d.tmp -c -o $@ crypto/asn1/x_long.c
+	@touch crypto/asn1/libcrypto-lib-x_long.d.tmp
+	@if cmp crypto/asn1/libcrypto-lib-x_long.d.tmp crypto/asn1/libcrypto-lib-x_long.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/asn1/libcrypto-lib-x_long.d.tmp; \
+	else \
+		mv crypto/asn1/libcrypto-lib-x_long.d.tmp crypto/asn1/libcrypto-lib-x_long.d; \
+	fi
 crypto/asn1/libcrypto-lib-x_pkey.o: crypto/asn1/x_pkey.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/asn1/libcrypto-lib-x_pkey.d.tmp -c -o $@ crypto/asn1/x_pkey.c
 	@touch crypto/asn1/libcrypto-lib-x_pkey.d.tmp
@@ -4805,6 +5038,14 @@ crypto/bn/libcrypto-lib-bn_ctx.o: crypto/bn/bn_ctx.c
 	else \
 		mv crypto/bn/libcrypto-lib-bn_ctx.d.tmp crypto/bn/libcrypto-lib-bn_ctx.d; \
 	fi
+crypto/bn/libcrypto-lib-bn_depr.o: crypto/bn/bn_depr.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/bn/libcrypto-lib-bn_depr.d.tmp -c -o $@ crypto/bn/bn_depr.c
+	@touch crypto/bn/libcrypto-lib-bn_depr.d.tmp
+	@if cmp crypto/bn/libcrypto-lib-bn_depr.d.tmp crypto/bn/libcrypto-lib-bn_depr.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/bn/libcrypto-lib-bn_depr.d.tmp; \
+	else \
+		mv crypto/bn/libcrypto-lib-bn_depr.d.tmp crypto/bn/libcrypto-lib-bn_depr.d; \
+	fi
 crypto/bn/libcrypto-lib-bn_dh.o: crypto/bn/bn_dh.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/bn/libcrypto-lib-bn_dh.d.tmp -c -o $@ crypto/bn/bn_dh.c
 	@touch crypto/bn/libcrypto-lib-bn_dh.d.tmp
@@ -5004,6 +5245,14 @@ crypto/bn/libcrypto-lib-bn_word.o: crypto/bn/bn_word.c
 		rm -f crypto/bn/libcrypto-lib-bn_word.d.tmp; \
 	else \
 		mv crypto/bn/libcrypto-lib-bn_word.d.tmp crypto/bn/libcrypto-lib-bn_word.d; \
+	fi
+crypto/bn/libcrypto-lib-bn_x931p.o: crypto/bn/bn_x931p.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/bn/libcrypto-lib-bn_x931p.d.tmp -c -o $@ crypto/bn/bn_x931p.c
+	@touch crypto/bn/libcrypto-lib-bn_x931p.d.tmp
+	@if cmp crypto/bn/libcrypto-lib-bn_x931p.d.tmp crypto/bn/libcrypto-lib-bn_x931p.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/bn/libcrypto-lib-bn_x931p.d.tmp; \
+	else \
+		mv crypto/bn/libcrypto-lib-bn_x931p.d.tmp crypto/bn/libcrypto-lib-bn_x931p.d; \
 	fi
 crypto/buffer/libcrypto-lib-buf_err.o: crypto/buffer/buf_err.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/buffer/libcrypto-lib-buf_err.d.tmp -c -o $@ crypto/buffer/buf_err.c
@@ -5477,6 +5726,14 @@ crypto/evp/libcrypto-lib-e_null.o: crypto/evp/e_null.c
 	else \
 		mv crypto/evp/libcrypto-lib-e_null.d.tmp crypto/evp/libcrypto-lib-e_null.d; \
 	fi
+crypto/evp/libcrypto-lib-e_old.o: crypto/evp/e_old.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/evp/libcrypto-lib-e_old.d.tmp -c -o $@ crypto/evp/e_old.c
+	@touch crypto/evp/libcrypto-lib-e_old.d.tmp
+	@if cmp crypto/evp/libcrypto-lib-e_old.d.tmp crypto/evp/libcrypto-lib-e_old.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/evp/libcrypto-lib-e_old.d.tmp; \
+	else \
+		mv crypto/evp/libcrypto-lib-e_old.d.tmp crypto/evp/libcrypto-lib-e_old.d; \
+	fi
 crypto/evp/libcrypto-lib-e_rc2.o: crypto/evp/e_rc2.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/evp/libcrypto-lib-e_rc2.d.tmp -c -o $@ crypto/evp/e_rc2.c
 	@touch crypto/evp/libcrypto-lib-e_rc2.d.tmp
@@ -5756,6 +6013,22 @@ crypto/evp/libcrypto-lib-p5_crpt2.o: crypto/evp/p5_crpt2.c
 		rm -f crypto/evp/libcrypto-lib-p5_crpt2.d.tmp; \
 	else \
 		mv crypto/evp/libcrypto-lib-p5_crpt2.d.tmp crypto/evp/libcrypto-lib-p5_crpt2.d; \
+	fi
+crypto/evp/libcrypto-lib-p_dec.o: crypto/evp/p_dec.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/evp/libcrypto-lib-p_dec.d.tmp -c -o $@ crypto/evp/p_dec.c
+	@touch crypto/evp/libcrypto-lib-p_dec.d.tmp
+	@if cmp crypto/evp/libcrypto-lib-p_dec.d.tmp crypto/evp/libcrypto-lib-p_dec.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/evp/libcrypto-lib-p_dec.d.tmp; \
+	else \
+		mv crypto/evp/libcrypto-lib-p_dec.d.tmp crypto/evp/libcrypto-lib-p_dec.d; \
+	fi
+crypto/evp/libcrypto-lib-p_enc.o: crypto/evp/p_enc.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/evp/libcrypto-lib-p_enc.d.tmp -c -o $@ crypto/evp/p_enc.c
+	@touch crypto/evp/libcrypto-lib-p_enc.d.tmp
+	@if cmp crypto/evp/libcrypto-lib-p_enc.d.tmp crypto/evp/libcrypto-lib-p_enc.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/evp/libcrypto-lib-p_enc.d.tmp; \
+	else \
+		mv crypto/evp/libcrypto-lib-p_enc.d.tmp crypto/evp/libcrypto-lib-p_enc.d; \
 	fi
 crypto/evp/libcrypto-lib-p_legacy.o: crypto/evp/p_legacy.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/evp/libcrypto-lib-p_legacy.d.tmp -c -o $@ crypto/evp/p_legacy.c
@@ -6943,6 +7216,14 @@ crypto/rand/libcrypto-lib-rand_lib.o: crypto/rand/rand_lib.c
 	else \
 		mv crypto/rand/libcrypto-lib-rand_lib.d.tmp crypto/rand/libcrypto-lib-rand_lib.d; \
 	fi
+crypto/rand/libcrypto-lib-rand_meth.o: crypto/rand/rand_meth.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/rand/libcrypto-lib-rand_meth.d.tmp -c -o $@ crypto/rand/rand_meth.c
+	@touch crypto/rand/libcrypto-lib-rand_meth.d.tmp
+	@if cmp crypto/rand/libcrypto-lib-rand_meth.d.tmp crypto/rand/libcrypto-lib-rand_meth.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/rand/libcrypto-lib-rand_meth.d.tmp; \
+	else \
+		mv crypto/rand/libcrypto-lib-rand_meth.d.tmp crypto/rand/libcrypto-lib-rand_meth.d; \
+	fi
 crypto/rand/libcrypto-lib-rand_pool.o: crypto/rand/rand_pool.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/rand/libcrypto-lib-rand_pool.d.tmp -c -o $@ crypto/rand/rand_pool.c
 	@touch crypto/rand/libcrypto-lib-rand_pool.d.tmp
@@ -7006,6 +7287,14 @@ crypto/rsa/libcrypto-lib-rsa_crpt.o: crypto/rsa/rsa_crpt.c
 		rm -f crypto/rsa/libcrypto-lib-rsa_crpt.d.tmp; \
 	else \
 		mv crypto/rsa/libcrypto-lib-rsa_crpt.d.tmp crypto/rsa/libcrypto-lib-rsa_crpt.d; \
+	fi
+crypto/rsa/libcrypto-lib-rsa_depr.o: crypto/rsa/rsa_depr.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/rsa/libcrypto-lib-rsa_depr.d.tmp -c -o $@ crypto/rsa/rsa_depr.c
+	@touch crypto/rsa/libcrypto-lib-rsa_depr.d.tmp
+	@if cmp crypto/rsa/libcrypto-lib-rsa_depr.d.tmp crypto/rsa/libcrypto-lib-rsa_depr.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/rsa/libcrypto-lib-rsa_depr.d.tmp; \
+	else \
+		mv crypto/rsa/libcrypto-lib-rsa_depr.d.tmp crypto/rsa/libcrypto-lib-rsa_depr.d; \
 	fi
 crypto/rsa/libcrypto-lib-rsa_err.o: crypto/rsa/rsa_err.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/rsa/libcrypto-lib-rsa_err.d.tmp -c -o $@ crypto/rsa/rsa_err.c
@@ -7159,6 +7448,14 @@ crypto/rsa/libcrypto-lib-rsa_x931.o: crypto/rsa/rsa_x931.c
 	else \
 		mv crypto/rsa/libcrypto-lib-rsa_x931.d.tmp crypto/rsa/libcrypto-lib-rsa_x931.d; \
 	fi
+crypto/rsa/libcrypto-lib-rsa_x931g.o: crypto/rsa/rsa_x931g.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/rsa/libcrypto-lib-rsa_x931g.d.tmp -c -o $@ crypto/rsa/rsa_x931g.c
+	@touch crypto/rsa/libcrypto-lib-rsa_x931g.d.tmp
+	@if cmp crypto/rsa/libcrypto-lib-rsa_x931g.d.tmp crypto/rsa/libcrypto-lib-rsa_x931g.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/rsa/libcrypto-lib-rsa_x931g.d.tmp; \
+	else \
+		mv crypto/rsa/libcrypto-lib-rsa_x931g.d.tmp crypto/rsa/libcrypto-lib-rsa_x931g.d; \
+	fi
 crypto/sha/libcrypto-lib-keccak1600.o: crypto/sha/keccak1600.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/sha/libcrypto-lib-keccak1600.d.tmp -c -o $@ crypto/sha/keccak1600.c
 	@touch crypto/sha/libcrypto-lib-keccak1600.d.tmp
@@ -7223,6 +7520,14 @@ crypto/store/libcrypto-lib-store_err.o: crypto/store/store_err.c
 	else \
 		mv crypto/store/libcrypto-lib-store_err.d.tmp crypto/store/libcrypto-lib-store_err.d; \
 	fi
+crypto/store/libcrypto-lib-store_init.o: crypto/store/store_init.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/store/libcrypto-lib-store_init.d.tmp -c -o $@ crypto/store/store_init.c
+	@touch crypto/store/libcrypto-lib-store_init.d.tmp
+	@if cmp crypto/store/libcrypto-lib-store_init.d.tmp crypto/store/libcrypto-lib-store_init.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/store/libcrypto-lib-store_init.d.tmp; \
+	else \
+		mv crypto/store/libcrypto-lib-store_init.d.tmp crypto/store/libcrypto-lib-store_init.d; \
+	fi
 crypto/store/libcrypto-lib-store_lib.o: crypto/store/store_lib.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/store/libcrypto-lib-store_lib.d.tmp -c -o $@ crypto/store/store_lib.c
 	@touch crypto/store/libcrypto-lib-store_lib.d.tmp
@@ -7238,6 +7543,14 @@ crypto/store/libcrypto-lib-store_meth.o: crypto/store/store_meth.c
 		rm -f crypto/store/libcrypto-lib-store_meth.d.tmp; \
 	else \
 		mv crypto/store/libcrypto-lib-store_meth.d.tmp crypto/store/libcrypto-lib-store_meth.d; \
+	fi
+crypto/store/libcrypto-lib-store_register.o: crypto/store/store_register.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/store/libcrypto-lib-store_register.d.tmp -c -o $@ crypto/store/store_register.c
+	@touch crypto/store/libcrypto-lib-store_register.d.tmp
+	@if cmp crypto/store/libcrypto-lib-store_register.d.tmp crypto/store/libcrypto-lib-store_register.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/store/libcrypto-lib-store_register.d.tmp; \
+	else \
+		mv crypto/store/libcrypto-lib-store_register.d.tmp crypto/store/libcrypto-lib-store_register.d; \
 	fi
 crypto/store/libcrypto-lib-store_result.o: crypto/store/store_result.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/store/libcrypto-lib-store_result.d.tmp -c -o $@ crypto/store/store_result.c
@@ -7255,22 +7568,6 @@ crypto/store/libcrypto-lib-store_strings.o: crypto/store/store_strings.c
 	else \
 		mv crypto/store/libcrypto-lib-store_strings.d.tmp crypto/store/libcrypto-lib-store_strings.d; \
 	fi
-crypto/thread/arch/libcrypto-lib-thread_none.o: crypto/thread/arch/thread_none.c
-	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/thread/arch/libcrypto-lib-thread_none.d.tmp -c -o $@ crypto/thread/arch/thread_none.c
-	@touch crypto/thread/arch/libcrypto-lib-thread_none.d.tmp
-	@if cmp crypto/thread/arch/libcrypto-lib-thread_none.d.tmp crypto/thread/arch/libcrypto-lib-thread_none.d > /dev/null 2> /dev/null; then \
-		rm -f crypto/thread/arch/libcrypto-lib-thread_none.d.tmp; \
-	else \
-		mv crypto/thread/arch/libcrypto-lib-thread_none.d.tmp crypto/thread/arch/libcrypto-lib-thread_none.d; \
-	fi
-crypto/thread/arch/libcrypto-lib-thread_posix.o: crypto/thread/arch/thread_posix.c
-	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/thread/arch/libcrypto-lib-thread_posix.d.tmp -c -o $@ crypto/thread/arch/thread_posix.c
-	@touch crypto/thread/arch/libcrypto-lib-thread_posix.d.tmp
-	@if cmp crypto/thread/arch/libcrypto-lib-thread_posix.d.tmp crypto/thread/arch/libcrypto-lib-thread_posix.d > /dev/null 2> /dev/null; then \
-		rm -f crypto/thread/arch/libcrypto-lib-thread_posix.d.tmp; \
-	else \
-		mv crypto/thread/arch/libcrypto-lib-thread_posix.d.tmp crypto/thread/arch/libcrypto-lib-thread_posix.d; \
-	fi
 crypto/thread/arch/libcrypto-lib-thread_win.o: crypto/thread/arch/thread_win.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/thread/arch/libcrypto-lib-thread_win.d.tmp -c -o $@ crypto/thread/arch/thread_win.c
 	@touch crypto/thread/arch/libcrypto-lib-thread_win.d.tmp
@@ -7286,22 +7583,6 @@ crypto/thread/libcrypto-lib-api.o: crypto/thread/api.c
 		rm -f crypto/thread/libcrypto-lib-api.d.tmp; \
 	else \
 		mv crypto/thread/libcrypto-lib-api.d.tmp crypto/thread/libcrypto-lib-api.d; \
-	fi
-crypto/thread/libcrypto-lib-arch.o: crypto/thread/arch.c
-	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/thread/libcrypto-lib-arch.d.tmp -c -o $@ crypto/thread/arch.c
-	@touch crypto/thread/libcrypto-lib-arch.d.tmp
-	@if cmp crypto/thread/libcrypto-lib-arch.d.tmp crypto/thread/libcrypto-lib-arch.d > /dev/null 2> /dev/null; then \
-		rm -f crypto/thread/libcrypto-lib-arch.d.tmp; \
-	else \
-		mv crypto/thread/libcrypto-lib-arch.d.tmp crypto/thread/libcrypto-lib-arch.d; \
-	fi
-crypto/thread/libcrypto-lib-internal.o: crypto/thread/internal.c
-	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/thread/libcrypto-lib-internal.d.tmp -c -o $@ crypto/thread/internal.c
-	@touch crypto/thread/libcrypto-lib-internal.d.tmp
-	@if cmp crypto/thread/libcrypto-lib-internal.d.tmp crypto/thread/libcrypto-lib-internal.d > /dev/null 2> /dev/null; then \
-		rm -f crypto/thread/libcrypto-lib-internal.d.tmp; \
-	else \
-		mv crypto/thread/libcrypto-lib-internal.d.tmp crypto/thread/libcrypto-lib-internal.d; \
 	fi
 crypto/txt_db/libcrypto-lib-txt_db.o: crypto/txt_db/txt_db.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/txt_db/libcrypto-lib-txt_db.d.tmp -c -o $@ crypto/txt_db/txt_db.c
@@ -8015,6 +8296,14 @@ crypto/x509/libcrypto-lib-x509spki.o: crypto/x509/x509spki.c
 	else \
 		mv crypto/x509/libcrypto-lib-x509spki.d.tmp crypto/x509/libcrypto-lib-x509spki.d; \
 	fi
+crypto/x509/libcrypto-lib-x509type.o: crypto/x509/x509type.c
+	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/x509/libcrypto-lib-x509type.d.tmp -c -o $@ crypto/x509/x509type.c
+	@touch crypto/x509/libcrypto-lib-x509type.d.tmp
+	@if cmp crypto/x509/libcrypto-lib-x509type.d.tmp crypto/x509/libcrypto-lib-x509type.d > /dev/null 2> /dev/null; then \
+		rm -f crypto/x509/libcrypto-lib-x509type.d.tmp; \
+	else \
+		mv crypto/x509/libcrypto-lib-x509type.d.tmp crypto/x509/libcrypto-lib-x509type.d; \
+	fi
 crypto/x509/libcrypto-lib-x_all.o: crypto/x509/x_all.c
 	$(CC)  -I. -Iinclude -Iproviders/common/include -Iproviders/implementations/include  -DSTATIC_LEGACY $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF crypto/x509/libcrypto-lib-x_all.d.tmp -c -o $@ crypto/x509/x_all.c
 	@touch crypto/x509/libcrypto-lib-x_all.d.tmp
@@ -8145,12 +8434,12 @@ libssl.a: ssl/libssl-lib-bio_ssl.o ssl/libssl-lib-d1_lib.o \
           ssl/libssl-lib-ssl_err.o ssl/libssl-lib-ssl_err_legacy.o \
           ssl/libssl-lib-ssl_init.o ssl/libssl-lib-ssl_lib.o \
           ssl/libssl-lib-ssl_mcnf.o ssl/libssl-lib-ssl_rsa.o \
-          ssl/libssl-lib-ssl_sess.o ssl/libssl-lib-ssl_stat.o \
-          ssl/libssl-lib-ssl_txt.o ssl/libssl-lib-ssl_utst.o \
-          ssl/libssl-lib-t1_enc.o ssl/libssl-lib-t1_lib.o \
-          ssl/libssl-lib-t1_trce.o ssl/libssl-lib-tls13_enc.o \
-          ssl/libssl-lib-tls_depr.o ssl/libssl-lib-tls_srp.o \
-          ssl/record/libssl-lib-rec_layer_d1.o \
+          ssl/libssl-lib-ssl_rsa_legacy.o ssl/libssl-lib-ssl_sess.o \
+          ssl/libssl-lib-ssl_stat.o ssl/libssl-lib-ssl_txt.o \
+          ssl/libssl-lib-ssl_utst.o ssl/libssl-lib-t1_enc.o \
+          ssl/libssl-lib-t1_lib.o ssl/libssl-lib-t1_trce.o \
+          ssl/libssl-lib-tls13_enc.o ssl/libssl-lib-tls_depr.o \
+          ssl/libssl-lib-tls_srp.o ssl/record/libssl-lib-rec_layer_d1.o \
           ssl/record/libssl-lib-rec_layer_s3.o \
           ssl/record/methods/libssl-lib-dtls_meth.o \
           ssl/record/methods/libssl-lib-ssl3_meth.o \
@@ -8169,7 +8458,7 @@ libssl.a: ssl/libssl-lib-bio_ssl.o ssl/libssl-lib-d1_lib.o \
           ssl/statem/libssl-lib-statem_lib.o \
           ssl/statem/libssl-lib-statem_srvr.o
 	$(RM) libssl.a
-	$(AR) $(ARFLAGS) libssl.a ssl/libssl-lib-bio_ssl.o ssl/libssl-lib-d1_lib.o ssl/libssl-lib-d1_msg.o ssl/libssl-lib-d1_srtp.o ssl/libssl-lib-methods.o ssl/libssl-lib-pqueue.o ssl/libssl-lib-s3_enc.o ssl/libssl-lib-s3_lib.o ssl/libssl-lib-s3_msg.o ssl/libssl-lib-ssl_asn1.o ssl/libssl-lib-ssl_cert.o ssl/libssl-lib-ssl_cert_comp.o ssl/libssl-lib-ssl_ciph.o ssl/libssl-lib-ssl_conf.o ssl/libssl-lib-ssl_err.o ssl/libssl-lib-ssl_err_legacy.o ssl/libssl-lib-ssl_init.o ssl/libssl-lib-ssl_lib.o ssl/libssl-lib-ssl_mcnf.o ssl/libssl-lib-ssl_rsa.o ssl/libssl-lib-ssl_sess.o ssl/libssl-lib-ssl_stat.o ssl/libssl-lib-ssl_txt.o ssl/libssl-lib-ssl_utst.o ssl/libssl-lib-t1_enc.o ssl/libssl-lib-t1_lib.o ssl/libssl-lib-t1_trce.o ssl/libssl-lib-tls13_enc.o ssl/libssl-lib-tls_depr.o ssl/libssl-lib-tls_srp.o ssl/record/libssl-lib-rec_layer_d1.o ssl/record/libssl-lib-rec_layer_s3.o ssl/record/methods/libssl-lib-dtls_meth.o ssl/record/methods/libssl-lib-ssl3_meth.o ssl/record/methods/libssl-lib-tls13_meth.o ssl/record/methods/libssl-lib-tls1_meth.o ssl/record/methods/libssl-lib-tls_common.o ssl/record/methods/libssl-lib-tls_multib.o ssl/record/methods/libssl-lib-tlsany_meth.o ssl/rio/libssl-lib-poll_immediate.o ssl/statem/libssl-lib-extensions.o ssl/statem/libssl-lib-extensions_clnt.o ssl/statem/libssl-lib-extensions_cust.o ssl/statem/libssl-lib-extensions_srvr.o ssl/statem/libssl-lib-statem.o ssl/statem/libssl-lib-statem_clnt.o ssl/statem/libssl-lib-statem_dtls.o ssl/statem/libssl-lib-statem_lib.o ssl/statem/libssl-lib-statem_srvr.o
+	$(AR) $(ARFLAGS) libssl.a ssl/libssl-lib-bio_ssl.o ssl/libssl-lib-d1_lib.o ssl/libssl-lib-d1_msg.o ssl/libssl-lib-d1_srtp.o ssl/libssl-lib-methods.o ssl/libssl-lib-pqueue.o ssl/libssl-lib-s3_enc.o ssl/libssl-lib-s3_lib.o ssl/libssl-lib-s3_msg.o ssl/libssl-lib-ssl_asn1.o ssl/libssl-lib-ssl_cert.o ssl/libssl-lib-ssl_cert_comp.o ssl/libssl-lib-ssl_ciph.o ssl/libssl-lib-ssl_conf.o ssl/libssl-lib-ssl_err.o ssl/libssl-lib-ssl_err_legacy.o ssl/libssl-lib-ssl_init.o ssl/libssl-lib-ssl_lib.o ssl/libssl-lib-ssl_mcnf.o ssl/libssl-lib-ssl_rsa.o ssl/libssl-lib-ssl_rsa_legacy.o ssl/libssl-lib-ssl_sess.o ssl/libssl-lib-ssl_stat.o ssl/libssl-lib-ssl_txt.o ssl/libssl-lib-ssl_utst.o ssl/libssl-lib-t1_enc.o ssl/libssl-lib-t1_lib.o ssl/libssl-lib-t1_trce.o ssl/libssl-lib-tls13_enc.o ssl/libssl-lib-tls_depr.o ssl/libssl-lib-tls_srp.o ssl/record/libssl-lib-rec_layer_d1.o ssl/record/libssl-lib-rec_layer_s3.o ssl/record/methods/libssl-lib-dtls_meth.o ssl/record/methods/libssl-lib-ssl3_meth.o ssl/record/methods/libssl-lib-tls13_meth.o ssl/record/methods/libssl-lib-tls1_meth.o ssl/record/methods/libssl-lib-tls_common.o ssl/record/methods/libssl-lib-tls_multib.o ssl/record/methods/libssl-lib-tlsany_meth.o ssl/rio/libssl-lib-poll_immediate.o ssl/statem/libssl-lib-extensions.o ssl/statem/libssl-lib-extensions_clnt.o ssl/statem/libssl-lib-extensions_cust.o ssl/statem/libssl-lib-extensions_srvr.o ssl/statem/libssl-lib-statem.o ssl/statem/libssl-lib-statem_clnt.o ssl/statem/libssl-lib-statem_dtls.o ssl/statem/libssl-lib-statem_lib.o ssl/statem/libssl-lib-statem_srvr.o
 	$(RANLIB) $@ || echo Never mind.
 ssl/libssl-lib-bio_ssl.o: ssl/bio_ssl.c
 	$(CC)  -I. -Iinclude  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF ssl/libssl-lib-bio_ssl.d.tmp -c -o $@ ssl/bio_ssl.c
@@ -8330,6 +8619,14 @@ ssl/libssl-lib-ssl_rsa.o: ssl/ssl_rsa.c
 		rm -f ssl/libssl-lib-ssl_rsa.d.tmp; \
 	else \
 		mv ssl/libssl-lib-ssl_rsa.d.tmp ssl/libssl-lib-ssl_rsa.d; \
+	fi
+ssl/libssl-lib-ssl_rsa_legacy.o: ssl/ssl_rsa_legacy.c
+	$(CC)  -I. -Iinclude  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF ssl/libssl-lib-ssl_rsa_legacy.d.tmp -c -o $@ ssl/ssl_rsa_legacy.c
+	@touch ssl/libssl-lib-ssl_rsa_legacy.d.tmp
+	@if cmp ssl/libssl-lib-ssl_rsa_legacy.d.tmp ssl/libssl-lib-ssl_rsa_legacy.d > /dev/null 2> /dev/null; then \
+		rm -f ssl/libssl-lib-ssl_rsa_legacy.d.tmp; \
+	else \
+		mv ssl/libssl-lib-ssl_rsa_legacy.d.tmp ssl/libssl-lib-ssl_rsa_legacy.d; \
 	fi
 ssl/libssl-lib-ssl_sess.o: ssl/ssl_sess.c
 	$(CC)  -I. -Iinclude  $(LIB_CFLAGS) $(LIB_CPPFLAGS) -MMD -MF ssl/libssl-lib-ssl_sess.d.tmp -c -o $@ ssl/ssl_sess.c
@@ -9421,6 +9718,408 @@ providers/implementations/kdfs/liblegacy-lib-pvkkdf.o: providers/implementations
 	else \
 		mv providers/implementations/kdfs/liblegacy-lib-pvkkdf.d.tmp providers/implementations/kdfs/liblegacy-lib-pvkkdf.d; \
 	fi
+apps/openssl: apps/openssl-bin-asn1parse.o apps/openssl-bin-ca.o \
+              apps/openssl-bin-ciphers.o apps/openssl-bin-crl.o \
+              apps/openssl-bin-crl2pkcs7.o apps/openssl-bin-dgst.o \
+              apps/openssl-bin-enc.o apps/openssl-bin-errstr.o \
+              apps/openssl-bin-fipsinstall.o apps/openssl-bin-genpkey.o \
+              apps/openssl-bin-genrsa.o apps/openssl-bin-info.o \
+              apps/openssl-bin-kdf.o apps/openssl-bin-list.o \
+              apps/openssl-bin-mac.o apps/openssl-bin-nseq.o \
+              apps/openssl-bin-openssl.o apps/openssl-bin-passwd.o \
+              apps/openssl-bin-pkcs12.o apps/openssl-bin-pkcs7.o \
+              apps/openssl-bin-pkcs8.o apps/openssl-bin-pkey.o \
+              apps/openssl-bin-pkeyparam.o apps/openssl-bin-pkeyutl.o \
+              apps/openssl-bin-prime.o apps/openssl-bin-progs.o \
+              apps/openssl-bin-rand.o apps/openssl-bin-rehash.o \
+              apps/openssl-bin-req.o apps/openssl-bin-rsa.o \
+              apps/openssl-bin-rsautl.o apps/openssl-bin-s_client.o \
+              apps/openssl-bin-s_server.o apps/openssl-bin-s_time.o \
+              apps/openssl-bin-sess_id.o apps/openssl-bin-smime.o \
+              apps/openssl-bin-speed.o apps/openssl-bin-spkac.o \
+              apps/openssl-bin-storeutl.o apps/openssl-bin-verify.o \
+              apps/openssl-bin-version.o apps/openssl-bin-x509.o \
+              apps/libapps.a libssl.a libcrypto.a
+	rm -f apps/openssl
+	$${LDCMD:-$(CC)} $(BIN_CFLAGS) -L. $(BIN_LDFLAGS) \
+		-o apps/openssl \
+		apps/openssl-bin-asn1parse.o apps/openssl-bin-ca.o \
+		apps/openssl-bin-ciphers.o apps/openssl-bin-crl.o \
+		apps/openssl-bin-crl2pkcs7.o apps/openssl-bin-dgst.o \
+		apps/openssl-bin-enc.o apps/openssl-bin-errstr.o \
+		apps/openssl-bin-fipsinstall.o apps/openssl-bin-genpkey.o \
+		apps/openssl-bin-genrsa.o apps/openssl-bin-info.o \
+		apps/openssl-bin-kdf.o apps/openssl-bin-list.o \
+		apps/openssl-bin-mac.o apps/openssl-bin-nseq.o \
+		apps/openssl-bin-openssl.o apps/openssl-bin-passwd.o \
+		apps/openssl-bin-pkcs12.o apps/openssl-bin-pkcs7.o \
+		apps/openssl-bin-pkcs8.o apps/openssl-bin-pkey.o \
+		apps/openssl-bin-pkeyparam.o apps/openssl-bin-pkeyutl.o \
+		apps/openssl-bin-prime.o apps/openssl-bin-progs.o \
+		apps/openssl-bin-rand.o apps/openssl-bin-rehash.o \
+		apps/openssl-bin-req.o apps/openssl-bin-rsa.o \
+		apps/openssl-bin-rsautl.o apps/openssl-bin-s_client.o \
+		apps/openssl-bin-s_server.o apps/openssl-bin-s_time.o \
+		apps/openssl-bin-sess_id.o apps/openssl-bin-smime.o \
+		apps/openssl-bin-speed.o apps/openssl-bin-spkac.o \
+		apps/openssl-bin-storeutl.o apps/openssl-bin-verify.o \
+		apps/openssl-bin-version.o apps/openssl-bin-x509.o \
+		apps/libapps.a -lssl -lcrypto $(BIN_EX_LIBS)
+apps/openssl-bin-asn1parse.o: apps/asn1parse.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-asn1parse.d.tmp -c -o $@ apps/asn1parse.c
+	@touch apps/openssl-bin-asn1parse.d.tmp
+	@if cmp apps/openssl-bin-asn1parse.d.tmp apps/openssl-bin-asn1parse.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-asn1parse.d.tmp; \
+	else \
+		mv apps/openssl-bin-asn1parse.d.tmp apps/openssl-bin-asn1parse.d; \
+	fi
+apps/progs.h: apps/progs.pl apps/progs.c
+	$(PERL) apps/progs.pl "-H" $(APPS_OPENSSL) > $@
+apps/progs.c: apps/progs.pl configdata.pm
+	$(PERL) apps/progs.pl "-C" $(APPS_OPENSSL) > $@
+apps/openssl-bin-ca.o: apps/ca.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-ca.d.tmp -c -o $@ apps/ca.c
+	@touch apps/openssl-bin-ca.d.tmp
+	@if cmp apps/openssl-bin-ca.d.tmp apps/openssl-bin-ca.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-ca.d.tmp; \
+	else \
+		mv apps/openssl-bin-ca.d.tmp apps/openssl-bin-ca.d; \
+	fi
+apps/openssl-bin-ciphers.o: apps/ciphers.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-ciphers.d.tmp -c -o $@ apps/ciphers.c
+	@touch apps/openssl-bin-ciphers.d.tmp
+	@if cmp apps/openssl-bin-ciphers.d.tmp apps/openssl-bin-ciphers.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-ciphers.d.tmp; \
+	else \
+		mv apps/openssl-bin-ciphers.d.tmp apps/openssl-bin-ciphers.d; \
+	fi
+apps/openssl-bin-crl.o: apps/crl.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-crl.d.tmp -c -o $@ apps/crl.c
+	@touch apps/openssl-bin-crl.d.tmp
+	@if cmp apps/openssl-bin-crl.d.tmp apps/openssl-bin-crl.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-crl.d.tmp; \
+	else \
+		mv apps/openssl-bin-crl.d.tmp apps/openssl-bin-crl.d; \
+	fi
+apps/openssl-bin-crl2pkcs7.o: apps/crl2pkcs7.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-crl2pkcs7.d.tmp -c -o $@ apps/crl2pkcs7.c
+	@touch apps/openssl-bin-crl2pkcs7.d.tmp
+	@if cmp apps/openssl-bin-crl2pkcs7.d.tmp apps/openssl-bin-crl2pkcs7.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-crl2pkcs7.d.tmp; \
+	else \
+		mv apps/openssl-bin-crl2pkcs7.d.tmp apps/openssl-bin-crl2pkcs7.d; \
+	fi
+apps/openssl-bin-dgst.o: apps/dgst.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-dgst.d.tmp -c -o $@ apps/dgst.c
+	@touch apps/openssl-bin-dgst.d.tmp
+	@if cmp apps/openssl-bin-dgst.d.tmp apps/openssl-bin-dgst.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-dgst.d.tmp; \
+	else \
+		mv apps/openssl-bin-dgst.d.tmp apps/openssl-bin-dgst.d; \
+	fi
+apps/openssl-bin-enc.o: apps/enc.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-enc.d.tmp -c -o $@ apps/enc.c
+	@touch apps/openssl-bin-enc.d.tmp
+	@if cmp apps/openssl-bin-enc.d.tmp apps/openssl-bin-enc.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-enc.d.tmp; \
+	else \
+		mv apps/openssl-bin-enc.d.tmp apps/openssl-bin-enc.d; \
+	fi
+apps/openssl-bin-errstr.o: apps/errstr.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-errstr.d.tmp -c -o $@ apps/errstr.c
+	@touch apps/openssl-bin-errstr.d.tmp
+	@if cmp apps/openssl-bin-errstr.d.tmp apps/openssl-bin-errstr.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-errstr.d.tmp; \
+	else \
+		mv apps/openssl-bin-errstr.d.tmp apps/openssl-bin-errstr.d; \
+	fi
+apps/openssl-bin-fipsinstall.o: apps/fipsinstall.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-fipsinstall.d.tmp -c -o $@ apps/fipsinstall.c
+	@touch apps/openssl-bin-fipsinstall.d.tmp
+	@if cmp apps/openssl-bin-fipsinstall.d.tmp apps/openssl-bin-fipsinstall.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-fipsinstall.d.tmp; \
+	else \
+		mv apps/openssl-bin-fipsinstall.d.tmp apps/openssl-bin-fipsinstall.d; \
+	fi
+apps/openssl-bin-genpkey.o: apps/genpkey.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-genpkey.d.tmp -c -o $@ apps/genpkey.c
+	@touch apps/openssl-bin-genpkey.d.tmp
+	@if cmp apps/openssl-bin-genpkey.d.tmp apps/openssl-bin-genpkey.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-genpkey.d.tmp; \
+	else \
+		mv apps/openssl-bin-genpkey.d.tmp apps/openssl-bin-genpkey.d; \
+	fi
+apps/openssl-bin-genrsa.o: apps/genrsa.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-genrsa.d.tmp -c -o $@ apps/genrsa.c
+	@touch apps/openssl-bin-genrsa.d.tmp
+	@if cmp apps/openssl-bin-genrsa.d.tmp apps/openssl-bin-genrsa.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-genrsa.d.tmp; \
+	else \
+		mv apps/openssl-bin-genrsa.d.tmp apps/openssl-bin-genrsa.d; \
+	fi
+apps/openssl-bin-info.o: apps/info.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-info.d.tmp -c -o $@ apps/info.c
+	@touch apps/openssl-bin-info.d.tmp
+	@if cmp apps/openssl-bin-info.d.tmp apps/openssl-bin-info.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-info.d.tmp; \
+	else \
+		mv apps/openssl-bin-info.d.tmp apps/openssl-bin-info.d; \
+	fi
+apps/openssl-bin-kdf.o: apps/kdf.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-kdf.d.tmp -c -o $@ apps/kdf.c
+	@touch apps/openssl-bin-kdf.d.tmp
+	@if cmp apps/openssl-bin-kdf.d.tmp apps/openssl-bin-kdf.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-kdf.d.tmp; \
+	else \
+		mv apps/openssl-bin-kdf.d.tmp apps/openssl-bin-kdf.d; \
+	fi
+apps/openssl-bin-list.o: apps/list.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-list.d.tmp -c -o $@ apps/list.c
+	@touch apps/openssl-bin-list.d.tmp
+	@if cmp apps/openssl-bin-list.d.tmp apps/openssl-bin-list.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-list.d.tmp; \
+	else \
+		mv apps/openssl-bin-list.d.tmp apps/openssl-bin-list.d; \
+	fi
+apps/openssl-bin-mac.o: apps/mac.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-mac.d.tmp -c -o $@ apps/mac.c
+	@touch apps/openssl-bin-mac.d.tmp
+	@if cmp apps/openssl-bin-mac.d.tmp apps/openssl-bin-mac.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-mac.d.tmp; \
+	else \
+		mv apps/openssl-bin-mac.d.tmp apps/openssl-bin-mac.d; \
+	fi
+apps/openssl-bin-nseq.o: apps/nseq.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-nseq.d.tmp -c -o $@ apps/nseq.c
+	@touch apps/openssl-bin-nseq.d.tmp
+	@if cmp apps/openssl-bin-nseq.d.tmp apps/openssl-bin-nseq.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-nseq.d.tmp; \
+	else \
+		mv apps/openssl-bin-nseq.d.tmp apps/openssl-bin-nseq.d; \
+	fi
+apps/openssl-bin-openssl.o: apps/openssl.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-openssl.d.tmp -c -o $@ apps/openssl.c
+	@touch apps/openssl-bin-openssl.d.tmp
+	@if cmp apps/openssl-bin-openssl.d.tmp apps/openssl-bin-openssl.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-openssl.d.tmp; \
+	else \
+		mv apps/openssl-bin-openssl.d.tmp apps/openssl-bin-openssl.d; \
+	fi
+apps/openssl-bin-passwd.o: apps/passwd.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-passwd.d.tmp -c -o $@ apps/passwd.c
+	@touch apps/openssl-bin-passwd.d.tmp
+	@if cmp apps/openssl-bin-passwd.d.tmp apps/openssl-bin-passwd.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-passwd.d.tmp; \
+	else \
+		mv apps/openssl-bin-passwd.d.tmp apps/openssl-bin-passwd.d; \
+	fi
+apps/openssl-bin-pkcs12.o: apps/pkcs12.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkcs12.d.tmp -c -o $@ apps/pkcs12.c
+	@touch apps/openssl-bin-pkcs12.d.tmp
+	@if cmp apps/openssl-bin-pkcs12.d.tmp apps/openssl-bin-pkcs12.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkcs12.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkcs12.d.tmp apps/openssl-bin-pkcs12.d; \
+	fi
+apps/openssl-bin-pkcs7.o: apps/pkcs7.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkcs7.d.tmp -c -o $@ apps/pkcs7.c
+	@touch apps/openssl-bin-pkcs7.d.tmp
+	@if cmp apps/openssl-bin-pkcs7.d.tmp apps/openssl-bin-pkcs7.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkcs7.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkcs7.d.tmp apps/openssl-bin-pkcs7.d; \
+	fi
+apps/openssl-bin-pkcs8.o: apps/pkcs8.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkcs8.d.tmp -c -o $@ apps/pkcs8.c
+	@touch apps/openssl-bin-pkcs8.d.tmp
+	@if cmp apps/openssl-bin-pkcs8.d.tmp apps/openssl-bin-pkcs8.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkcs8.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkcs8.d.tmp apps/openssl-bin-pkcs8.d; \
+	fi
+apps/openssl-bin-pkey.o: apps/pkey.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkey.d.tmp -c -o $@ apps/pkey.c
+	@touch apps/openssl-bin-pkey.d.tmp
+	@if cmp apps/openssl-bin-pkey.d.tmp apps/openssl-bin-pkey.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkey.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkey.d.tmp apps/openssl-bin-pkey.d; \
+	fi
+apps/openssl-bin-pkeyparam.o: apps/pkeyparam.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkeyparam.d.tmp -c -o $@ apps/pkeyparam.c
+	@touch apps/openssl-bin-pkeyparam.d.tmp
+	@if cmp apps/openssl-bin-pkeyparam.d.tmp apps/openssl-bin-pkeyparam.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkeyparam.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkeyparam.d.tmp apps/openssl-bin-pkeyparam.d; \
+	fi
+apps/openssl-bin-pkeyutl.o: apps/pkeyutl.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-pkeyutl.d.tmp -c -o $@ apps/pkeyutl.c
+	@touch apps/openssl-bin-pkeyutl.d.tmp
+	@if cmp apps/openssl-bin-pkeyutl.d.tmp apps/openssl-bin-pkeyutl.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-pkeyutl.d.tmp; \
+	else \
+		mv apps/openssl-bin-pkeyutl.d.tmp apps/openssl-bin-pkeyutl.d; \
+	fi
+apps/openssl-bin-prime.o: apps/prime.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-prime.d.tmp -c -o $@ apps/prime.c
+	@touch apps/openssl-bin-prime.d.tmp
+	@if cmp apps/openssl-bin-prime.d.tmp apps/openssl-bin-prime.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-prime.d.tmp; \
+	else \
+		mv apps/openssl-bin-prime.d.tmp apps/openssl-bin-prime.d; \
+	fi
+apps/openssl-bin-progs.o: apps/progs.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-progs.d.tmp -c -o $@ apps/progs.c
+	@touch apps/openssl-bin-progs.d.tmp
+	@if cmp apps/openssl-bin-progs.d.tmp apps/openssl-bin-progs.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-progs.d.tmp; \
+	else \
+		mv apps/openssl-bin-progs.d.tmp apps/openssl-bin-progs.d; \
+	fi
+apps/openssl-bin-rand.o: apps/rand.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-rand.d.tmp -c -o $@ apps/rand.c
+	@touch apps/openssl-bin-rand.d.tmp
+	@if cmp apps/openssl-bin-rand.d.tmp apps/openssl-bin-rand.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-rand.d.tmp; \
+	else \
+		mv apps/openssl-bin-rand.d.tmp apps/openssl-bin-rand.d; \
+	fi
+apps/openssl-bin-rehash.o: apps/rehash.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-rehash.d.tmp -c -o $@ apps/rehash.c
+	@touch apps/openssl-bin-rehash.d.tmp
+	@if cmp apps/openssl-bin-rehash.d.tmp apps/openssl-bin-rehash.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-rehash.d.tmp; \
+	else \
+		mv apps/openssl-bin-rehash.d.tmp apps/openssl-bin-rehash.d; \
+	fi
+apps/openssl-bin-req.o: apps/req.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-req.d.tmp -c -o $@ apps/req.c
+	@touch apps/openssl-bin-req.d.tmp
+	@if cmp apps/openssl-bin-req.d.tmp apps/openssl-bin-req.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-req.d.tmp; \
+	else \
+		mv apps/openssl-bin-req.d.tmp apps/openssl-bin-req.d; \
+	fi
+apps/openssl-bin-rsa.o: apps/rsa.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-rsa.d.tmp -c -o $@ apps/rsa.c
+	@touch apps/openssl-bin-rsa.d.tmp
+	@if cmp apps/openssl-bin-rsa.d.tmp apps/openssl-bin-rsa.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-rsa.d.tmp; \
+	else \
+		mv apps/openssl-bin-rsa.d.tmp apps/openssl-bin-rsa.d; \
+	fi
+apps/openssl-bin-rsautl.o: apps/rsautl.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-rsautl.d.tmp -c -o $@ apps/rsautl.c
+	@touch apps/openssl-bin-rsautl.d.tmp
+	@if cmp apps/openssl-bin-rsautl.d.tmp apps/openssl-bin-rsautl.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-rsautl.d.tmp; \
+	else \
+		mv apps/openssl-bin-rsautl.d.tmp apps/openssl-bin-rsautl.d; \
+	fi
+apps/openssl-bin-s_client.o: apps/s_client.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-s_client.d.tmp -c -o $@ apps/s_client.c
+	@touch apps/openssl-bin-s_client.d.tmp
+	@if cmp apps/openssl-bin-s_client.d.tmp apps/openssl-bin-s_client.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-s_client.d.tmp; \
+	else \
+		mv apps/openssl-bin-s_client.d.tmp apps/openssl-bin-s_client.d; \
+	fi
+apps/openssl-bin-s_server.o: apps/s_server.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-s_server.d.tmp -c -o $@ apps/s_server.c
+	@touch apps/openssl-bin-s_server.d.tmp
+	@if cmp apps/openssl-bin-s_server.d.tmp apps/openssl-bin-s_server.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-s_server.d.tmp; \
+	else \
+		mv apps/openssl-bin-s_server.d.tmp apps/openssl-bin-s_server.d; \
+	fi
+apps/openssl-bin-s_time.o: apps/s_time.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-s_time.d.tmp -c -o $@ apps/s_time.c
+	@touch apps/openssl-bin-s_time.d.tmp
+	@if cmp apps/openssl-bin-s_time.d.tmp apps/openssl-bin-s_time.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-s_time.d.tmp; \
+	else \
+		mv apps/openssl-bin-s_time.d.tmp apps/openssl-bin-s_time.d; \
+	fi
+apps/openssl-bin-sess_id.o: apps/sess_id.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-sess_id.d.tmp -c -o $@ apps/sess_id.c
+	@touch apps/openssl-bin-sess_id.d.tmp
+	@if cmp apps/openssl-bin-sess_id.d.tmp apps/openssl-bin-sess_id.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-sess_id.d.tmp; \
+	else \
+		mv apps/openssl-bin-sess_id.d.tmp apps/openssl-bin-sess_id.d; \
+	fi
+apps/openssl-bin-smime.o: apps/smime.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-smime.d.tmp -c -o $@ apps/smime.c
+	@touch apps/openssl-bin-smime.d.tmp
+	@if cmp apps/openssl-bin-smime.d.tmp apps/openssl-bin-smime.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-smime.d.tmp; \
+	else \
+		mv apps/openssl-bin-smime.d.tmp apps/openssl-bin-smime.d; \
+	fi
+apps/openssl-bin-speed.o: apps/speed.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-speed.d.tmp -c -o $@ apps/speed.c
+	@touch apps/openssl-bin-speed.d.tmp
+	@if cmp apps/openssl-bin-speed.d.tmp apps/openssl-bin-speed.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-speed.d.tmp; \
+	else \
+		mv apps/openssl-bin-speed.d.tmp apps/openssl-bin-speed.d; \
+	fi
+apps/openssl-bin-spkac.o: apps/spkac.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-spkac.d.tmp -c -o $@ apps/spkac.c
+	@touch apps/openssl-bin-spkac.d.tmp
+	@if cmp apps/openssl-bin-spkac.d.tmp apps/openssl-bin-spkac.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-spkac.d.tmp; \
+	else \
+		mv apps/openssl-bin-spkac.d.tmp apps/openssl-bin-spkac.d; \
+	fi
+apps/openssl-bin-storeutl.o: apps/storeutl.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-storeutl.d.tmp -c -o $@ apps/storeutl.c
+	@touch apps/openssl-bin-storeutl.d.tmp
+	@if cmp apps/openssl-bin-storeutl.d.tmp apps/openssl-bin-storeutl.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-storeutl.d.tmp; \
+	else \
+		mv apps/openssl-bin-storeutl.d.tmp apps/openssl-bin-storeutl.d; \
+	fi
+apps/openssl-bin-verify.o: apps/verify.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-verify.d.tmp -c -o $@ apps/verify.c
+	@touch apps/openssl-bin-verify.d.tmp
+	@if cmp apps/openssl-bin-verify.d.tmp apps/openssl-bin-verify.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-verify.d.tmp; \
+	else \
+		mv apps/openssl-bin-verify.d.tmp apps/openssl-bin-verify.d; \
+	fi
+apps/openssl-bin-version.o: apps/version.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-version.d.tmp -c -o $@ apps/version.c
+	@touch apps/openssl-bin-version.d.tmp
+	@if cmp apps/openssl-bin-version.d.tmp apps/openssl-bin-version.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-version.d.tmp; \
+	else \
+		mv apps/openssl-bin-version.d.tmp apps/openssl-bin-version.d; \
+	fi
+apps/openssl-bin-x509.o: apps/x509.c apps/progs.h
+	$(CC)  -Iapps -I. -Iinclude -Iapps/include  $(BIN_CFLAGS) $(BIN_CPPFLAGS) -MMD -MF apps/openssl-bin-x509.d.tmp -c -o $@ apps/x509.c
+	@touch apps/openssl-bin-x509.d.tmp
+	@if cmp apps/openssl-bin-x509.d.tmp apps/openssl-bin-x509.d > /dev/null 2> /dev/null; then \
+		rm -f apps/openssl-bin-x509.d.tmp; \
+	else \
+		mv apps/openssl-bin-x509.d.tmp apps/openssl-bin-x509.d; \
+	fi
+apps/CA.pl: apps/CA.pl.in configdata.pm
+	$(RM) "apps/CA.pl"
+	$(PERL) "-I$(BLDDIR)" -Mconfigdata "util/dofile.pl" \
+	    "-oMakefile" apps/CA.pl.in > "apps/CA.pl"
+	chmod a+x apps/CA.pl
+apps/tsget.pl: apps/tsget.in configdata.pm
+	$(RM) "apps/tsget.pl"
+	$(PERL) "-I$(BLDDIR)" -Mconfigdata "util/dofile.pl" \
+	    "-oMakefile" apps/tsget.in > "apps/tsget.pl"
+	chmod a+x apps/tsget.pl
+tools/c_rehash: tools/c_rehash.in configdata.pm
+	$(RM) "tools/c_rehash"
+	$(PERL) "-I$(BLDDIR)" -Mconfigdata "util/dofile.pl" \
+	    "-oMakefile" tools/c_rehash.in > "tools/c_rehash"
+	chmod a+x tools/c_rehash
 util/shlib_wrap.sh: util/shlib_wrap.sh.in configdata.pm
 	$(RM) "util/shlib_wrap.sh"
 	$(PERL) "-I$(BLDDIR)" -Mconfigdata "util/dofile.pl" \
