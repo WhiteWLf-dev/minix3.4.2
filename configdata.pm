@@ -273,7 +273,6 @@ our %config = (
     "perl_cmd" => "perl",
     "perl_version" => "5.30.3",
     "perlargv" => [
-        "no-apps",
         "no-asm",
         "no-async",
         "no-atexit",
@@ -295,7 +294,6 @@ our %config = (
         "no-ec",
         "no-ec2m",
         "no-engine",
-        "no-err",
         "no-filenames",
         "no-fips-securitychecks",
         "no-fips-post",
